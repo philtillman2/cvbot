@@ -75,7 +75,19 @@
                     CVbot
                 {% endif %}
             </span>
-            <div class="ms-auto">
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="usage-summary usage-summary-inline" id="chatUsageSummary">
+                    <div class="usage-summary-meta">
+                        <span id="chatUsageTokenText">0 in / 0 out tokens</span>
+                    </div>
+                    <div class="progress usage-progress" role="progressbar" aria-label="Cost usage">
+                        <div class="progress-bar" id="chatUsageProgressBar" style="width: 0%"></div>
+                    </div>
+                    <div class="usage-progress-labels">
+                        <span id="chatUsageCurrentCost">$0.00</span>
+                        <span id="chatUsageMaxCost">${{ '%.2f'|format(daily_limit_usd) }}</span>
+                    </div>
+                </div>
                 <select class="form-select form-select-sm model-select" id="modelSelect">
                     <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
                     <option value="openai/gpt-4o">GPT-4o</option>
@@ -86,7 +98,6 @@
                 </select>
             </div>
         </div>
-
         <div class="chat-messages" id="chatMessages">
             {% if not active_conversation %}
             <div class="welcome-screen">

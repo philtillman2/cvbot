@@ -35,6 +35,7 @@ async def chat_page(request: Request):
         "candidates": candidates,
         "active_conversation": None,
         "messages": [],
+        "daily_limit_usd": settings.max_daily_cost_usd,
     })
 
 
@@ -62,6 +63,7 @@ async def chat_page_with_conversation(request: Request, conversation_id: int):
         "candidates": candidates,
         "active_conversation": active_conversation,
         "messages": messages,
+        "daily_limit_usd": settings.max_daily_cost_usd,
     })
 
 
@@ -108,12 +110,13 @@ def _build_streaming_response(db, conversation_id: int, model: str, messages, us
 
         # Log cost
         if usage_info:
-            await log_request(
+            cost_info = await log_request(
                 conversation_id=conversation_id,
                 model_id=model,
                 input_tokens=usage_info["input_tokens"],
                 output_tokens=usage_info["output_tokens"],
             )
+            usage_info.update(cost_info)
             yield f"data: {json.dumps(usage_info)}\n\n"
 
         yield "data: [DONE]\n\n"

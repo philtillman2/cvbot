@@ -8,7 +8,7 @@ async def log_request(
     model_id: str,
     input_tokens: int,
     output_tokens: int,
-):
+) -> dict[str, float]:
     """Log an LLM request and compute cost."""
     pricing = get_model_pricing(model_id)
     if pricing is None:
@@ -27,6 +27,18 @@ async def log_request(
         (conversation_id, model_id, input_tokens, output_tokens, cost_usd),
     )
     await db.commit()
+    daily_total_row = await db.execute_fetchall(
+        """
+        SELECT COALESCE(SUM(cost_usd), 0) AS total
+        FROM llm_requests
+        WHERE cost_usd IS NOT NULL AND DATE(created_at) = DATE('now')
+        """
+    )
+    return {
+        "request_cost_usd": float(cost_usd or 0.0),
+        "daily_total_usd": float(daily_total_row[0]["total"]),
+        "daily_limit_usd": float(settings.max_daily_cost_usd),
+    }
 
 
 async def _backfill_missing_costs():
@@ -92,6 +104,22 @@ async def get_monthly_costs() -> list[dict]:
         """
     )
     return [{"month": row["month"], "total": round(row["total"], 6)} for row in rows]
+
+
+async def get_today_cost_usage() -> dict[str, float]:
+    await _backfill_missing_costs()
+    db = await get_db()
+    row = await db.execute_fetchall(
+        """
+        SELECT COALESCE(SUM(cost_usd), 0) AS total
+        FROM llm_requests
+        WHERE cost_usd IS NOT NULL AND DATE(created_at) = DATE('now')
+        """
+    )
+    return {
+        "daily_total_usd": float(row[0]["total"]),
+        "daily_limit_usd": float(settings.max_daily_cost_usd),
+    }
 
 
 async def is_daily_cost_limit_reached() -> bool:

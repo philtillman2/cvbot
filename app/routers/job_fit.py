@@ -10,6 +10,7 @@ from app.services.llm import stream_chat
 from app.services.candidate_loader import get_profile_json
 from app.services.cost_tracker import log_request
 from app.models import JobFitRequest
+from app.config import settings
 
 router = APIRouter(tags=["job_fit"])
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
@@ -46,6 +47,7 @@ async def job_fit_page(request: Request):
     return templates.TemplateResponse("job_fit.html", {
         "request": request,
         "candidates": candidates,
+        "daily_limit_usd": settings.max_daily_cost_usd,
     })
 
 
@@ -68,12 +70,13 @@ async def job_fit_stream(body: JobFitRequest):
             if chunk["type"] == "token":
                 yield f"data: {json.dumps(chunk)}\n\n"
             elif chunk["type"] == "usage":
-                await log_request(
+                cost_info = await log_request(
                     conversation_id=None,
                     model_id=body.model,
                     input_tokens=chunk["input_tokens"],
                     output_tokens=chunk["output_tokens"],
                 )
+                chunk.update(cost_info)
                 yield f"data: {json.dumps(chunk)}\n\n"
         yield "data: [DONE]\n\n"
 

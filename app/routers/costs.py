@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from starlette.templating import Jinja2Templates
 from pathlib import Path
 
-from app.services.cost_tracker import get_daily_costs, get_monthly_costs
+from app.services.cost_tracker import get_daily_costs, get_monthly_costs, get_today_cost_usage
 
 router = APIRouter(tags=["costs"])
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
@@ -21,3 +21,8 @@ async def daily_costs():
 @router.get("/api/costs/monthly")
 async def monthly_costs():
     return await get_monthly_costs()
+
+
+@router.get("/api/costs/today")
+async def today_cost_usage():
+    return await get_today_cost_usage()

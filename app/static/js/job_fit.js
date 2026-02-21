@@ -48,7 +48,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyzeBtn = document.getElementById('analyzeBtn');
     const resultsSection = document.getElementById('resultsSection');
     const resultsContent = document.getElementById('resultsContent');
-    const usageBadge = document.getElementById('usageBadge');
+    const usageSummary = document.getElementById('jobFitUsageSummary');
+    const usageTokenText = document.getElementById('jobFitUsageTokenText');
+    const usageProgressBar = document.getElementById('jobFitUsageProgressBar');
+    const usageCurrentCost = document.getElementById('jobFitUsageCurrentCost');
+    const usageMaxCost = document.getElementById('jobFitUsageMaxCost');
+
+    function updateUsageSummary(usage) {
+        const dailyLimit = usage.daily_limit_usd || 0;
+        const dailyTotal = usage.daily_total_usd || 0;
+        const pct = dailyLimit > 0 ? Math.min((dailyTotal / dailyLimit) * 100, 100) : 0;
+        usageSummary?.classList.remove('d-none');
+        if (usageTokenText) {
+            usageTokenText.textContent =
+                `${usage.input_tokens} in / ${usage.output_tokens} out tokens`;
+        }
+        if (usageCurrentCost) usageCurrentCost.textContent = `$${dailyTotal.toFixed(2)}`;
+        if (usageMaxCost) usageMaxCost.textContent = `$${dailyLimit.toFixed(2)}`;
+        if (usageProgressBar) {
+            usageProgressBar.style.width = `${pct}%`;
+            usageProgressBar.setAttribute('aria-valuenow', String(pct));
+        }
+    }
+
+    async function initializeUsageSummary() {
+        try {
+            const resp = await fetch('/api/costs/today');
+            if (!resp.ok) return;
+            const usage = await resp.json();
+            updateUsageSummary({ ...usage, input_tokens: 0, output_tokens: 0 });
+        } catch (_) {}
+    }
+
+    initializeUsageSummary();
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -62,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show results section, clear previous
         resultsSection.classList.remove('d-none');
         resultsContent.innerHTML = '<span class="streaming-cursor"></span>';
-        usageBadge.style.display = 'none';
         analyzeBtn.disabled = true;
         analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Analyzing...';
 
@@ -101,9 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             resultsContent.innerHTML = marked.parse(fullText) +
                                 '<span class="streaming-cursor"></span>';
                         } else if (chunk.type === 'usage') {
-                            usageBadge.textContent =
-                                `${chunk.input_tokens} in / ${chunk.output_tokens} out tokens`;
-                            usageBadge.style.display = '';
+                            updateUsageSummary(chunk);
                         }
                     } catch (_) {}
                 }
