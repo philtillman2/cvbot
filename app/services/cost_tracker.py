@@ -1,5 +1,6 @@
 from app.database import get_db
 from app.services.llm import fetch_models, get_model_pricing
+from app.config import settings
 
 
 async def log_request(
@@ -91,3 +92,16 @@ async def get_monthly_costs() -> list[dict]:
         """
     )
     return [{"month": row["month"], "total": round(row["total"], 6)} for row in rows]
+
+
+async def is_daily_cost_limit_reached() -> bool:
+    await _backfill_missing_costs()
+    db = await get_db()
+    row = await db.execute_fetchall(
+        """
+        SELECT COALESCE(SUM(cost_usd), 0) AS total
+        FROM llm_requests
+        WHERE cost_usd IS NOT NULL AND DATE(created_at) = DATE('now')
+        """
+    )
+    return float(row[0]["total"]) >= settings.max_daily_cost_usd

@@ -1,14 +1,15 @@
 import json
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import RedirectResponse, StreamingResponse
+from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
 from starlette.templating import Jinja2Templates
 from pathlib import Path
 
 from app.database import get_db
 from app.services.llm import stream_chat
 from app.services.candidate_loader import get_profile_json
-from app.services.cost_tracker import log_request
+from app.services.cost_tracker import is_daily_cost_limit_reached, log_request
+from app.config import settings
 from app.models import ChatRequest
 
 router = APIRouter()
@@ -123,6 +124,16 @@ def _build_streaming_response(db, conversation_id: int, model: str, messages, us
 @router.post("/api/chat/{conversation_id}")
 async def chat_stream(conversation_id: int, body: ChatRequest):
     db = await get_db()
+    if await is_daily_cost_limit_reached():
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": (
+                    f"Daily chat limit reached (${settings.max_daily_cost_usd:.2f}). "
+                    "Please try again tomorrow."
+                )
+            },
+        )
 
     # Get conversation and candidate info
     rows = await db.execute_fetchall(
@@ -165,6 +176,16 @@ async def chat_stream(conversation_id: int, body: ChatRequest):
 @router.post("/api/chat/{conversation_id}/edit/{message_id}")
 async def edit_chat_stream(conversation_id: int, message_id: int, body: ChatRequest):
     db = await get_db()
+    if await is_daily_cost_limit_reached():
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": (
+                    f"Daily chat limit reached (${settings.max_daily_cost_usd:.2f}). "
+                    "Please try again tomorrow."
+                )
+            },
+        )
 
     rows = await db.execute_fetchall(
         "SELECT c.*, ca.display_name as candidate_name FROM conversations c "

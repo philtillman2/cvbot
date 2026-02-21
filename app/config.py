@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     url: str = "http://localhost:8000"
     openrouter_url: str = "https://openrouter.ai/api/v1/chat/completions"
     models_url: str = "https://openrouter.ai/api/v1/models"
+    max_daily_cost_usd: float = 5.0
     db_path: str = "cvbot.db"
     data_dir: str = "data/candidates"
     env: str = "dev"

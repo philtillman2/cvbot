@@ -252,7 +252,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }),
             });
             if (!resp.ok || !resp.body) {
-                throw new Error("Failed to send message");
+                let errorMessage = "Failed to send message";
+                try {
+                    const payload = await resp.json();
+                    if (payload?.error) errorMessage = payload.error;
+                } catch (e) {}
+                throw new Error(errorMessage);
             }
 
             const reader = resp.body.getReader();
@@ -306,6 +311,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (userContent) userContent.textContent = originalUserText;
                 assistantDiv.remove();
                 removedTail.forEach((node) => chatMessages.appendChild(node));
+                alert(err.message);
             } else {
                 assistantDiv.querySelector(".message-content").textContent =
                     "Error: " + err.message;
