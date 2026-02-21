@@ -113,3 +113,9 @@ class ChatRequest(BaseModel):
 class CandidateOut(BaseModel):
     id: str
     display_name: str
+
+
+class JobFitRequest(BaseModel):
+    candidate_id: str
+    job_description: str
+    model: str = "openai/gpt-4o-mini"

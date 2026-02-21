@@ -3,7 +3,7 @@ from app.services.llm import get_model_pricing
 
 
 async def log_request(
-    conversation_id: int,
+    conversation_id: int | None,
     model_id: str,
     input_tokens: int,
     output_tokens: int,

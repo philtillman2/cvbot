@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}CVbot — Job Fit Analysis{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4" style="max-width: 900px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/chat" class="btn btn-sm btn-outline-secondary me-3">
+            <i class="bi bi-arrow-left"></i> Back to Chat
+        </a>
+        <h3 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Job Fit Analysis</h3>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form id="jobFitForm">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="candidateSelect" class="form-label">Candidate</label>
+                        <select class="form-select" id="candidateSelect" required>
+                            {% for c in candidates %}
+                            <option value="{{ c['id'] }}">{{ c['display_name'] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="modelSelect" class="form-label">Model</label>
+                        <select class="form-select" id="modelSelect">
+                            <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="openai/gpt-4o">GPT-4o</option>
+                            <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                            <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="jobDescription" class="form-label">Job Description</label>
+                    <textarea class="form-control" id="jobDescription" rows="10"
+                              placeholder="Paste the full job description here..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="analyzeBtn">
+                    <i class="bi bi-search me-1"></i> Analyze Fit
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="resultsSection" class="d-none">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <span><i class="bi bi-file-earmark-text me-1"></i> Analysis Results</span>
+                <span class="badge bg-secondary" id="usageBadge" style="display:none;"></span>
+            </div>
+            <div class="card-body">
+                <div id="resultsContent" class="job-fit-results"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/static/js/job_fit.js"></script>
+{% endblock %}
