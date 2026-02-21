@@ -14,20 +14,20 @@ CVbot is a web application where a hiring manager can chat with the work experie
 # Clone and enter the project
 cd cvbot
 
-# Create virtual environment and install dependencies
-uv venv
-uv pip install -r requirements.txt
+# Install dependencies
+uv sync
 
-# Configure environment
-cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
+# Configure environment and app config
+# Create/edit secrets/.env and set:
+# - ENV=dev
+# - OPENROUTER_API_KEY=...
+# Then adjust config/config-dev.yaml if needed
 
 # Add candidate JSON files to data/candidates/
 # (see plans/CVbot prompt.md for the JSON schema)
 
 # Run the server
-source .venv/bin/activate
-uvicorn app.main:app --reload --port 8000
+uv run uvicorn app.main:app --reload --port 8000
 ```
 
 Open http://localhost:8000 in your browser.
