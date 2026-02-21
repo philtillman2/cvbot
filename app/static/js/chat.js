@@ -24,6 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
         conversationId = parseInt(pathMatch[1]);
     }
 
+    function setTooltip(el, text) {
+        if (!el) return;
+        el.setAttribute("data-bs-toggle", "tooltip");
+        el.setAttribute("data-bs-placement", "bottom");
+        el.setAttribute("data-bs-title", text);
+        el.setAttribute("aria-label", text);
+        if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) return;
+        bootstrap.Tooltip.getInstance(el)?.dispose();
+        new bootstrap.Tooltip(el);
+    }
+
     // Auto-resize textarea
     chatInput.addEventListener("input", () => {
         chatInput.style.height = "auto";
@@ -121,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
             startInlineRename(btn.closest(".conversation-item"), btn.dataset.id);
         });
     });
+    document.querySelectorAll(".edit-message").forEach((btn) => setTooltip(btn, "Edit"));
     document.querySelectorAll(".conversation-item .conv-title").forEach((titleEl) => {
         titleEl.addEventListener("click", (e) => {
             e.preventDefault();
@@ -379,7 +391,8 @@ document.addEventListener("DOMContentLoaded", () => {
         selection.removeAllRanges();
         selection.addRange(range);
         editBtn.dataset.mode = "editing";
-        editBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Save';
+        editBtn.innerHTML = '<i class="bi bi-check-lg"></i>';
+        setTooltip(editBtn, "Save");
         ensureCancelEditButton(messageDiv);
     }
 
@@ -394,7 +407,8 @@ document.addEventListener("DOMContentLoaded", () => {
         contentEl.removeAttribute("contenteditable");
         messageDiv.classList.remove("inline-editing");
         editBtn.dataset.mode = "";
-        editBtn.innerHTML = '<i class="bi bi-pencil-square me-1"></i>Edit';
+        editBtn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+        setTooltip(editBtn, "Edit");
         messageDiv.querySelector(".cancel-edit-message")?.remove();
     }
 
@@ -437,7 +451,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageDiv || messageDiv.querySelector(".edit-message")) return;
         const btn = document.createElement("button");
         btn.className = "btn btn-link btn-sm edit-message p-0 mt-1 text-white";
-        btn.innerHTML = '<i class="bi bi-pencil-square me-1"></i>Edit';
+        btn.innerHTML = '<i class="bi bi-pencil-square"></i>';
+        setTooltip(btn, "Edit");
         messageDiv.appendChild(btn);
     }
 
@@ -445,7 +460,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!messageDiv || messageDiv.querySelector(".cancel-edit-message")) return;
         const btn = document.createElement("button");
         btn.className = "btn btn-link btn-sm cancel-edit-message p-0 mt-1 ms-2 text-white";
-        btn.innerHTML = '<i class="bi bi-x-lg me-1"></i>Cancel';
+        btn.innerHTML = '<i class="bi bi-x-lg"></i>';
+        setTooltip(btn, "Cancel");
         messageDiv.appendChild(btn);
     }
 });
