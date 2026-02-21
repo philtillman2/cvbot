@@ -248,6 +248,17 @@ html, body {
     box-shadow: none;
 }
 
+.btn-primary {
+    --bs-btn-bg: var(--accent);
+    --bs-btn-border-color: var(--accent);
+    --bs-btn-hover-bg: color-mix(in srgb, var(--accent) 85%, black);
+    --bs-btn-hover-border-color: color-mix(in srgb, var(--accent) 85%, black);
+    --bs-btn-active-bg: color-mix(in srgb, var(--accent) 75%, black);
+    --bs-btn-active-border-color: color-mix(in srgb, var(--accent) 75%, black);
+    --bs-btn-disabled-bg: var(--accent);
+    --bs-btn-disabled-border-color: var(--accent);
+}
+
 .send-btn {
     border-radius: 50%;
     width: 38px;
