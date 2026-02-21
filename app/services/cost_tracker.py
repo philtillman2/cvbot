@@ -1,5 +1,5 @@
 from app.database import get_db
-from app.services.llm import get_model_pricing
+from app.services.llm import fetch_models, get_model_pricing
 
 
 async def log_request(
@@ -10,6 +10,9 @@ async def log_request(
 ):
     """Log an LLM request and compute cost."""
     pricing = get_model_pricing(model_id)
+    if pricing is None:
+        await fetch_models()
+        pricing = get_model_pricing(model_id)
     cost_usd = None
     if pricing:
         cost_usd = (
@@ -25,7 +28,38 @@ async def log_request(
     await db.commit()
 
 
+async def _backfill_missing_costs():
+    db = await get_db()
+    rows = await db.execute_fetchall(
+        "SELECT id, model_id, input_tokens, output_tokens FROM llm_requests WHERE cost_usd IS NULL"
+    )
+    if not rows:
+        return
+
+    if any(get_model_pricing(row["model_id"]) is None for row in rows):
+        await fetch_models()
+
+    updated = False
+    for row in rows:
+        pricing = get_model_pricing(row["model_id"])
+        if not pricing:
+            continue
+        cost_usd = (
+            row["input_tokens"] * pricing["input"]
+            + row["output_tokens"] * pricing["output"]
+        )
+        await db.execute(
+            "UPDATE llm_requests SET cost_usd = ? WHERE id = ?",
+            (cost_usd, row["id"]),
+        )
+        updated = True
+
+    if updated:
+        await db.commit()
+
+
 async def get_daily_costs() -> list[dict]:
+    await _backfill_missing_costs()
     db = await get_db()
     rows = await db.execute_fetchall(
         """
@@ -45,6 +79,7 @@ async def get_daily_costs() -> list[dict]:
 
 
 async def get_monthly_costs() -> list[dict]:
+    await _backfill_missing_costs()
     db = await get_db()
     rows = await db.execute_fetchall(
         """
