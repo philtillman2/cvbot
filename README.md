@@ -37,6 +37,7 @@ Open http://localhost:8000 in your browser.
 - **Chat with candidate experience**: Select a candidate and ask questions about their work history, skills, education
 - **Streaming responses**: Real-time token-by-token LLM output via Server-Sent Events
 - **Light/Dark theme**: Auto-detects system preference, with manual toggle
+- **Job fit analysis page**: Paste a job description and get a structured fit assessment with overall verdict, plus side-by-side strengths/pros and weaknesses/cons cards
 - **Cost dashboard**: Track LLM usage with daily cumulative line chart and monthly bar chart
 - **Multiple models**: Choose from GPT-4o, Claude, Gemini via OpenRouter
 
@@ -48,7 +49,7 @@ app/
 ├── config.py            # Settings (env vars)
 ├── database.py          # SQLite schema & helpers
 ├── models.py            # Pydantic models
-├── routers/             # API routes (chat, conversations, candidates, costs)
+├── routers/             # API routes (chat, conversations, candidates, costs, job_fit)
 ├── services/            # Business logic (LLM client, candidate loader, cost tracker)
 ├── templates/           # Jinja2 HTML templates
 └── static/              # CSS and JavaScript
