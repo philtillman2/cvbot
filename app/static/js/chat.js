@@ -59,6 +59,97 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    function startInlineRename(item, id) {
+        const titleEl = item?.querySelector(".conv-title");
+        if (!titleEl || !id || titleEl.dataset.editing === "true") return;
+        titleEl.dataset.editing = "true";
+        titleEl.dataset.originalTitle = titleEl.textContent.trim() || "New Chat";
+        titleEl.setAttribute("contenteditable", "true");
+        titleEl.classList.add("editing");
+        titleEl.focus();
+        const range = document.createRange();
+        range.selectNodeContents(titleEl);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    async function finishInlineRename(titleEl, save) {
+        if (!titleEl || titleEl.dataset.editing !== "true" || titleEl.dataset.saving === "true") return;
+        titleEl.dataset.saving = "true";
+        const item = titleEl.closest(".conversation-item");
+        const id = item?.dataset?.id;
+        const originalTitle = titleEl.dataset.originalTitle || "New Chat";
+        const nextTitle = titleEl.textContent.trim();
+        titleEl.removeAttribute("contenteditable");
+        titleEl.classList.remove("editing");
+        titleEl.dataset.editing = "false";
+        if (!save || !nextTitle || nextTitle === originalTitle || !id) {
+            titleEl.textContent = originalTitle;
+            titleEl.dataset.saving = "false";
+            return;
+        }
+        const resp = await fetch(`/api/conversations/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: nextTitle }),
+        });
+        if (!resp.ok) {
+            titleEl.textContent = originalTitle;
+            alert("Unable to rename chat.");
+            titleEl.dataset.saving = "false";
+            return;
+        }
+        const conv = await resp.json();
+        titleEl.textContent = conv.title || "New Chat";
+        titleEl.dataset.saving = "false";
+    }
+
+    const titleClickTimers = new WeakMap();
+
+    // Rename conversation
+    document.querySelectorAll(".rename-conv").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            startInlineRename(btn.closest(".conversation-item"), btn.dataset.id);
+        });
+    });
+    document.querySelectorAll(".conversation-item .conv-title").forEach((titleEl) => {
+        titleEl.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const item = titleEl.closest(".conversation-item");
+            if (!item || titleEl.dataset.editing === "true") return;
+            if (e.detail === 1) {
+                const timer = setTimeout(() => {
+                    window.location.href = item.getAttribute("href");
+                }, 220);
+                titleClickTimers.set(titleEl, timer);
+                return;
+            }
+            const timer = titleClickTimers.get(titleEl);
+            if (timer) {
+                clearTimeout(timer);
+                titleClickTimers.delete(titleEl);
+            }
+            startInlineRename(item, item?.dataset?.id);
+        });
+        titleEl.addEventListener("keydown", async (e) => {
+            if (titleEl.dataset.editing !== "true") return;
+            if (e.key === "Enter") {
+                e.preventDefault();
+                await finishInlineRename(titleEl, true);
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                await finishInlineRename(titleEl, false);
+            }
+        });
+        titleEl.addEventListener("blur", async () => {
+            await finishInlineRename(titleEl, true);
+        });
+    });
+
     // Search threads
     searchThreads.addEventListener("input", () => {
         const q = searchThreads.value.toLowerCase();

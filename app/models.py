@@ -90,6 +90,10 @@ class ConversationCreate(BaseModel):
     candidate_id: str
 
 
+class ConversationRename(BaseModel):
+    title: str
+
+
 class ConversationOut(BaseModel):
     id: int
     candidate_id: str

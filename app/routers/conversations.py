@@ -1,6 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.database import get_db
-from app.models import ConversationCreate, ConversationOut
+from app.models import ConversationCreate, ConversationOut, ConversationRename
 
 router = APIRouter(prefix="/api/conversations", tags=["conversations"])
 
@@ -37,3 +37,22 @@ async def delete_conversation(conversation_id: int):
     await db.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
     await db.commit()
     return {"ok": True}
+
+
+@router.put("/{conversation_id}")
+async def rename_conversation(conversation_id: int, body: ConversationRename):
+    db = await get_db()
+    existing = await db.execute_fetchall(
+        "SELECT id FROM conversations WHERE id = ?", (conversation_id,)
+    )
+    if not existing:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    await db.execute(
+        "UPDATE conversations SET title = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        (body.title, conversation_id),
+    )
+    await db.commit()
+    row = await db.execute_fetchall(
+        "SELECT * FROM conversations WHERE id = ?", (conversation_id,)
+    )
+    return dict(row[0])

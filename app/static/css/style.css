@@ -108,14 +108,22 @@ body.job-fit-page {
     color: #fff;
 }
 
+.conversation-item .conv-actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+}
+
+.conversation-item .rename-conv,
 .conversation-item .delete-conv {
-    opacity: 0;
+    opacity: 0.55;
     transition: opacity 0.15s;
     color: inherit !important;
 }
 
+.conversation-item:hover .rename-conv,
 .conversation-item:hover .delete-conv {
-    opacity: 0.7;
+    opacity: 0.9;
 }
 
 .conv-title {
@@ -123,6 +131,16 @@ body.job-fit-page {
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
+}
+
+.conv-title.editing {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 0.25rem;
+    padding: 0 0.25rem;
 }
 
 .sidebar-footer {
