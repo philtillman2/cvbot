@@ -67,11 +67,29 @@ class Education(BaseModel):
     dissertation: Optional[Dissertation] = None
 
 
+class Author(BaseModel):
+    first_name: str = ""
+    last_name: str = ""
+
+
+class PageRange(BaseModel):
+    start: Optional[int] = None
+    end: Optional[int] = None
+
+
 class Publication(BaseModel):
     title: str = ""
     abstract: str = ""
+    authors: list[Author] = []
     date: Optional[dict] = None
     journal: str = ""
+    publication: str = ""
+    volume: Optional[int] = None
+    issue: Optional[int] = None
+    pages: Optional[PageRange] = None
+    publisher: str = ""
+    editor: str = ""
+    isbn: Optional[int] = None
     doi: str = ""
     links: list[str] = []
 

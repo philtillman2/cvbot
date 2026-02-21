@@ -49,6 +49,11 @@ body.costs-page {
     overflow-x: hidden;
 }
 
+body.work-experience-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .app-layout {
     display: flex;
     height: 100vh;
@@ -399,6 +404,47 @@ body.costs-page {
 
 [data-bs-theme="dark"] .fit-card-strengths .fit-card-header { color: #75b798; }
 [data-bs-theme="dark"] .fit-card-weaknesses .fit-card-header { color: #ea868f; }
+
+/* ===== Work Experience ===== */
+.we-employer-header {
+    padding: 1rem 1.25rem;
+}
+
+.we-employer-link {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.we-employer-link:hover {
+    text-decoration: underline;
+}
+
+.we-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--welcome-text);
+}
+
+.we-date-badge {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.we-role {
+    padding: 1rem 1.25rem;
+}
+
+.we-role-title {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.we-items {
+    margin-top: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--sidebar-border);
+}
 
 /* ===== Streaming cursor ===== */
 .streaming-cursor::after {

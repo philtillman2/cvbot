@@ -156,7 +156,8 @@
                         "year": 2014,
                         "month": 9
                     },
-                    "role": "Software developer",
+                    "title": "Software developer",
+                    "employment_type": "Full time",
                     "items": [
                         {
                             "title": "Redesign of Viewport",
@@ -245,18 +246,41 @@
     ],
     "publications": [
         {
-            "title": "",
-            "abstract": "",
+            "title": "Grammatical structures and oral fluency in immediate task repetition: Trigrams across repeated performances",
+            "abstract": "In this study we examine to what extent words and grammatical structures are re-used when a speaking task is repeated with the same content (i.e., specific task repetition). We examine this re-use, which has been argued to support proceduralization and fluency development (N. de Jong & Perfetti, 2011), under both constant and increasing time pressure, and we investigate the correlation between re-use and fluency. The analyses are performed not only on individual words but also on trigrams, which are sequences of three words (e.g., the red car; here: lexical trigrams) or three parts of speech (e.g., det adj noun: POS trigrams), to capture grammatical structure. Thirty-nine adult ESL speakers completed repeated retellings of one to three picture stories. One group followed the 4/3/2 procedure (Nation, 1989), which involves three iterations with gradually increasing time pressure; for the other group the available time was constant. The extent of re-use of words and grammatical structures across task iterations was calculated using cosine similarity with tf-idf weighting (Manning, Raghavan, & Schütze, 2008), which adjusts for the frequency of words or trigrams, both within an iteration and across iterations and speakers. It was found that immediate task repetition had a strong effect on re-use at the level of individual words and trigrams, but increasing time pressure did not. The relationship between re-use and fluency was variable, but showed higher re-use for speakers struggling with fluency. We conclude that, if fluency development is to be stimulated by re-use of words and grammatical structures, it can be done with specific task repetition, whether under increasing time pressure or not.",
+            "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
             "date": {
-                "year": 2025,
-                "month": 1,
-                "day": 23
+                "year": 2018,
+                "month": 10,
+                "day": 1
             },
-            "journal": "",
-            "doi": "",
+            "isbn": 9789027263780,
+            "editor": "M. Bygate",
+            "publication": "Learning Language through Task Repetition",
+            "pages": {"start": 43, "end": 73},
+            "publisher": "Amsterdam: John Benjamins",
+            "doi": "10.1075/tblt.11.02jon",
             "links": [
-                "link1",
-                "link2"
+                "http://jbe-platform.com/content/books/9789027263780-tblt.11.02jon"
+            ]
+        },
+        {
+            "title": "Fedosov observables on constant curvature manifolds and the Klein–Gordon equation",
+            "abstract": "In this paper we construct the Fedosov star-algebra of observables on the phase–space of a single particle in the case of all (finite-dimensional) constant curvature manifolds imbeddable in a flat space with codimension one. This set of spaces includes the two-sphere and de Sitter (dS)/Anti-de Sitter (AdS) space–times. The algebra of observables was constructed by DQ techniques using, in particular, the algorithm provided by Fedosov.\n\nThe purpose of this paper was three-fold. One was to verify that DQ gave the same results as previous analyses of these spaces. Another was to verify that the formal series used in the conventional treatment converged by obtaining exact and nonperturbative results for these spaces. The last was to further develop and understand the technology of the Fedosov algorithm.",
+            "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
+            "date": {
+                "year": 2008,
+                "month": 6,
+                "day": 1
+            },
+            "publication": "Journal of Geometry and Physics ",
+            "volume": 58,
+            "issue": 6,
+            "pages": {"start": 773, "end": 801},
+            "publisher": "Amsterdam: Elsevier",
+            "doi": "10.1016/j.geomphys.2008.02.001",
+            "links": [
+                "https://www.sciencedirect.com/science/article/pii/S039304400800020X?via%3Dihub"
             ]
         }
     ]
