@@ -6,12 +6,14 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "aiosqlite>=0.22.1",
+    "dotenv>=0.9.9",
     "fastapi>=0.129.1",
     "httpx>=0.28.1",
     "jinja2>=3.1.6",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.1",
+    "pyyaml>=6.0.3",
     "uvicorn[standard]>=0.41.0",
 ]
 

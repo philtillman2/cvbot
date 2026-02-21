@@ -1,0 +1,5 @@
+url: "http://localhost:8000"
+openrouter_url: "https://openrouter.ai/api/v1/chat/completions"
+models_url: "https://openrouter.ai/api/v1/models"
+db_path: cvbot.db
+data_dir: data/candidates

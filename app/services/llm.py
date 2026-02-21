@@ -4,8 +4,8 @@ from collections.abc import AsyncGenerator
 import httpx
 from app.config import settings
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODELS_URL = "https://openrouter.ai/api/v1/models"
+OPENROUTER_URL = settings.openrouter_url
+MODELS_URL = settings.models_url
 
 # Cached model pricing: model_id -> {input, output} price per token
 _pricing: dict[str, dict[str, float]] = {}
@@ -15,7 +15,7 @@ def _headers() -> dict[str, str]:
     return {
         "Authorization": f"Bearer {settings.openrouter_api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:8000",
+        "HTTP-Referer": settings.url,
         "X-Title": "CVbot",
     }
 
