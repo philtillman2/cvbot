@@ -226,6 +226,31 @@ body.work-experience-page {
     border-bottom-right-radius: 0.25rem;
 }
 
+.message-user .edit-message {
+    opacity: 0.75;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+.message-user .edit-message:hover,
+.message-user .cancel-edit-message:hover {
+    opacity: 1;
+}
+
+.message-user .cancel-edit-message {
+    opacity: 0.75;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+.message-user.inline-editing .message-content {
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(0, 0, 0, 0.12);
+}
+
 .message-assistant {
     align-self: flex-start;
     background: var(--message-assistant-bg);

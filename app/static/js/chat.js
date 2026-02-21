@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSidebar = document.getElementById("closeSidebar");
 
     let conversationId = null;
+    let editingMessageId = null;
 
     // Extract conversation ID from URL
     const pathMatch = window.location.pathname.match(/^\/chat\/(\d+)$/);
@@ -163,6 +164,29 @@ document.addEventListener("DOMContentLoaded", () => {
     openSidebar?.addEventListener("click", () => sidebar.classList.add("open"));
     closeSidebar?.addEventListener("click", () => sidebar.classList.remove("open"));
 
+    // Edit user messages
+    chatMessages.addEventListener("click", (e) => {
+        const btn = e.target.closest(".edit-message");
+        if (btn) {
+            if (sendBtn.disabled) return;
+            e.preventDefault();
+            const messageDiv = btn.closest(".message-user");
+            if (!messageDiv?.dataset?.messageId) return;
+            if (btn.dataset.mode === "editing") {
+                submitInlineEdit(messageDiv);
+            } else {
+                startInlineEdit(messageDiv);
+            }
+            return;
+        }
+        const cancelBtn = e.target.closest(".cancel-edit-message");
+        if (!cancelBtn || sendBtn.disabled) return;
+        e.preventDefault();
+        const messageDiv = cancelBtn.closest(".message-user");
+        if (!messageDiv) return;
+        finishInlineEdit(messageDiv, false);
+    });
+
     // Scroll to bottom
     function scrollToBottom() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -177,14 +201,40 @@ document.addEventListener("DOMContentLoaded", () => {
     scrollToBottom();
 
     // Send message
-    async function sendMessage() {
-        const text = chatInput.value.trim();
+    async function sendMessage(overrideText = null) {
+        const text = (overrideText ?? chatInput.value).trim();
         if (!text || !conversationId) return;
+        const isEdit = editingMessageId !== null;
+        const endpoint = isEdit
+            ? `/api/chat/${conversationId}/edit/${editingMessageId}`
+            : `/api/chat/${conversationId}`;
+        let userDiv = null;
+        let originalUserText = "";
+        const removedTail = [];
 
-        // Add user message to UI
-        appendMessage("user", text);
-        chatInput.value = "";
-        chatInput.style.height = "auto";
+        if (isEdit) {
+            userDiv = chatMessages.querySelector(`.message-user[data-message-id="${editingMessageId}"]`);
+            if (!userDiv) {
+                editingMessageId = null;
+                return;
+            }
+            const userContent = userDiv.querySelector(".message-content");
+            originalUserText = userContent?.textContent || "";
+            if (userContent) userContent.textContent = text;
+            let next = userDiv.nextElementSibling;
+            while (next) {
+                const following = next.nextElementSibling;
+                removedTail.push(next);
+                next.remove();
+                next = following;
+            }
+        } else {
+            userDiv = appendMessage("user", text);
+        }
+        if (!isEdit) {
+            chatInput.value = "";
+            chatInput.style.height = "auto";
+        }
         sendBtn.disabled = true;
         chatInput.disabled = true;
 
@@ -193,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
         assistantDiv.querySelector(".message-content").classList.add("streaming-cursor");
 
         try {
-            const resp = await fetch(`/api/chat/${conversationId}`, {
+            const resp = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -201,6 +251,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     model: modelSelect.value,
                 }),
             });
+            if (!resp.ok || !resp.body) {
+                throw new Error("Failed to send message");
+            }
 
             const reader = resp.body.getReader();
             const decoder = new TextDecoder();
@@ -220,7 +273,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     try {
                         const data = JSON.parse(dataStr);
-                        if (data.type === "token") {
+                        if (data.type === "user_message" && data.message_id && userDiv) {
+                            userDiv.dataset.messageId = String(data.message_id);
+                            ensureEditButton(userDiv);
+                        } else if (data.type === "token") {
                             fullText += data.content;
                             const contentEl = assistantDiv.querySelector(".message-content");
                             if (typeof marked !== "undefined") {
@@ -245,14 +301,71 @@ document.addEventListener("DOMContentLoaded", () => {
                 contentEl.innerHTML = marked.parse(fullText);
             }
         } catch (err) {
-            assistantDiv.querySelector(".message-content").textContent =
-                "Error: " + err.message;
-            assistantDiv.querySelector(".message-content").classList.remove("streaming-cursor");
+            if (isEdit && userDiv) {
+                const userContent = userDiv.querySelector(".message-content");
+                if (userContent) userContent.textContent = originalUserText;
+                assistantDiv.remove();
+                removedTail.forEach((node) => chatMessages.appendChild(node));
+            } else {
+                assistantDiv.querySelector(".message-content").textContent =
+                    "Error: " + err.message;
+                assistantDiv.querySelector(".message-content").classList.remove("streaming-cursor");
+            }
+        } finally {
+            if (isEdit) editingMessageId = null;
         }
 
         sendBtn.disabled = false;
         chatInput.disabled = false;
         chatInput.focus();
+    }
+
+    function startInlineEdit(messageDiv) {
+        const active = chatMessages.querySelector(".message-user.inline-editing");
+        if (active && active !== messageDiv) {
+            finishInlineEdit(active, false);
+        }
+        const contentEl = messageDiv.querySelector(".message-content");
+        const editBtn = messageDiv.querySelector(".edit-message");
+        if (!contentEl || !editBtn) return;
+        messageDiv.dataset.originalContent = contentEl.textContent || "";
+        messageDiv.classList.add("inline-editing");
+        contentEl.setAttribute("contenteditable", "true");
+        contentEl.focus();
+        const range = document.createRange();
+        range.selectNodeContents(contentEl);
+        range.collapse(false);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        editBtn.dataset.mode = "editing";
+        editBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i>Save';
+        ensureCancelEditButton(messageDiv);
+    }
+
+    function finishInlineEdit(messageDiv, keepChanges) {
+        const contentEl = messageDiv?.querySelector(".message-content");
+        const editBtn = messageDiv?.querySelector(".edit-message");
+        if (!contentEl || !editBtn) return;
+        if (!keepChanges) {
+            contentEl.textContent = messageDiv.dataset.originalContent || contentEl.textContent;
+            editingMessageId = null;
+        }
+        contentEl.removeAttribute("contenteditable");
+        messageDiv.classList.remove("inline-editing");
+        editBtn.dataset.mode = "";
+        editBtn.innerHTML = '<i class="bi bi-pencil-square me-1"></i>Edit';
+        messageDiv.querySelector(".cancel-edit-message")?.remove();
+    }
+
+    async function submitInlineEdit(messageDiv) {
+        const contentEl = messageDiv.querySelector(".message-content");
+        if (!contentEl) return;
+        const text = contentEl.textContent.trim();
+        if (!text) return;
+        editingMessageId = parseInt(messageDiv.dataset.messageId);
+        finishInlineEdit(messageDiv, true);
+        await sendMessage(text);
     }
 
     function appendMessage(role, content) {
@@ -272,8 +385,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         div.appendChild(contentDiv);
+        if (role === "user") {
+            ensureEditButton(div);
+        }
         chatMessages.appendChild(div);
         scrollToBottom();
         return div;
+    }
+
+    function ensureEditButton(messageDiv) {
+        if (!messageDiv || messageDiv.querySelector(".edit-message")) return;
+        const btn = document.createElement("button");
+        btn.className = "btn btn-link btn-sm edit-message p-0 mt-1 text-white";
+        btn.innerHTML = '<i class="bi bi-pencil-square me-1"></i>Edit';
+        messageDiv.appendChild(btn);
+    }
+
+    function ensureCancelEditButton(messageDiv) {
+        if (!messageDiv || messageDiv.querySelector(".cancel-edit-message")) return;
+        const btn = document.createElement("button");
+        btn.className = "btn btn-link btn-sm cancel-edit-message p-0 mt-1 ms-2 text-white";
+        btn.innerHTML = '<i class="bi bi-x-lg me-1"></i>Cancel';
+        messageDiv.appendChild(btn);
     }
 });
