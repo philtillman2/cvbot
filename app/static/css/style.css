@@ -42,16 +42,19 @@ html, body {
 body.job-fit-page {
     overflow-y: auto;
     overflow-x: hidden;
+    background: var(--chat-bg);
 }
 
 body.costs-page {
     overflow-y: auto;
     overflow-x: hidden;
+    background: var(--chat-bg);
 }
 
 body.work-experience-page {
     overflow-y: auto;
     overflow-x: hidden;
+    background: var(--chat-bg);
 }
 
 .app-layout {
