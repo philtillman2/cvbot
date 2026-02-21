@@ -44,6 +44,11 @@ body.job-fit-page {
     overflow-x: hidden;
 }
 
+body.costs-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .app-layout {
     display: flex;
     height: 100vh;
