@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}CVbot — Chat{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h5 class="sidebar-brand">CVbot</h5>
+            <button class="btn btn-sm btn-outline-light d-md-none" id="closeSidebar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <button class="btn btn-primary w-100 mb-3" id="newChatBtn">
+            <i class="bi bi-plus-lg me-1"></i> New Chat
+        </button>
+
+        <div class="mb-3">
+            <select class="form-select form-select-sm" id="candidateSelect">
+                {% for c in candidates %}
+                <option value="{{ c['id'] }}">{{ c['display_name'] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="sidebar-search mb-2">
+            <input type="text" class="form-control form-control-sm" placeholder="Search threads..." id="searchThreads">
+        </div>
+
+        <nav class="conversation-list" id="conversationList">
+            {% for conv in conversations %}
+            <a href="/chat/{{ conv['id'] }}"
+               class="conversation-item {% if active_conversation and active_conversation['id'] == conv['id'] %}active{% endif %}"
+               data-id="{{ conv['id'] }}">
+                <span class="conv-title">{{ conv['title'] or 'New Chat' }}</span>
+                <button class="btn btn-sm btn-link text-muted delete-conv p-0" data-id="{{ conv['id'] }}">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </a>
+            {% endfor %}
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/costs" class="btn btn-sm btn-outline-secondary w-100">
+                <i class="bi bi-graph-up me-1"></i> Cost Dashboard
+            </a>
+            <button class="btn btn-sm btn-outline-secondary w-100 mt-2" id="themeToggle">
+                <i class="bi bi-moon-stars me-1"></i> Toggle Theme
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="chat-main">
+        <div class="chat-topbar">
+            <button class="btn btn-sm btn-outline-secondary d-md-none me-2" id="openSidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="topbar-title">
+                {% if active_conversation %}
+                    {{ active_conversation['candidate_name'] }}
+                {% else %}
+                    CVbot
+                {% endif %}
+            </span>
+            <div class="ms-auto">
+                <select class="form-select form-select-sm model-select" id="modelSelect">
+                    <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="openai/gpt-4o">GPT-4o</option>
+                    <option value="anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                    <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            {% if not active_conversation %}
+            <div class="welcome-screen">
+                <h2>How can I help you?</h2>
+                <p class="text-muted">Select a candidate and start a conversation to explore their work experience.</p>
+            </div>
+            {% else %}
+                {% for msg in messages %}
+                <div class="message message-{{ msg['role'] }}">
+                    <div class="message-content">{{ msg['content'] }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+                <textarea class="form-control" id="chatInput" placeholder="Type your message here..."
+                          rows="1" {% if not active_conversation %}disabled{% endif %}></textarea>
+                <button class="btn btn-primary send-btn" id="sendBtn"
+                        {% if not active_conversation %}disabled{% endif %}>
+                    <i class="bi bi-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="/static/js/chat.js"></script>
+{% endblock %}

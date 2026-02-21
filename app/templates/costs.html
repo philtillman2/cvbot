@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}CVbot — Cost Dashboard{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4" style="max-width: 1000px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/chat" class="btn btn-sm btn-outline-secondary me-3">
+            <i class="bi bi-arrow-left"></i> Back to Chat
+        </a>
+        <h3 class="mb-0">Cost Dashboard</h3>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Cumulative Daily Costs</div>
+                <div class="card-body">
+                    <canvas id="dailyChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">Monthly Costs</div>
+                <div class="card-body">
+                    <canvas id="monthlyChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/costs.js"></script>
+{% endblock %}

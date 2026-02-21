@@ -1,0 +1,142 @@
+import json
+
+from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse, StreamingResponse
+from starlette.templating import Jinja2Templates
+from pathlib import Path
+
+from app.database import get_db
+from app.services.llm import stream_chat
+from app.services.candidate_loader import get_profile_json
+from app.services.cost_tracker import log_request
+from app.models import ChatRequest
+
+router = APIRouter()
+templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
+
+
+@router.get("/")
+async def index():
+    return RedirectResponse(url="/chat")
+
+
+@router.get("/chat")
+async def chat_page(request: Request):
+    db = await get_db()
+    conversations = await db.execute_fetchall(
+        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
+    )
+    candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
+    return templates.TemplateResponse("chat.html", {
+        "request": request,
+        "conversations": conversations,
+        "candidates": candidates,
+        "active_conversation": None,
+        "messages": [],
+    })
+
+
+@router.get("/chat/{conversation_id}")
+async def chat_page_with_conversation(request: Request, conversation_id: int):
+    db = await get_db()
+    conversations = await db.execute_fetchall(
+        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
+    )
+    candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
+    active = await db.execute_fetchall(
+        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "JOIN candidates ca ON c.candidate_id = ca.id WHERE c.id = ?",
+        (conversation_id,),
+    )
+    active_conversation = active[0] if active else None
+    messages = await db.execute_fetchall(
+        "SELECT * FROM messages WHERE conversation_id = ? AND role != 'system' ORDER BY created_at",
+        (conversation_id,),
+    )
+    return templates.TemplateResponse("chat.html", {
+        "request": request,
+        "conversations": conversations,
+        "candidates": candidates,
+        "active_conversation": active_conversation,
+        "messages": messages,
+    })
+
+
+def _build_system_prompt(candidate_id: str, display_name: str) -> str:
+    profile_json = get_profile_json(candidate_id)
+    return (
+        f"You are an AI assistant representing the professional experience of {display_name}. "
+        "Answer questions about their work experience, skills, education, and publications "
+        "based ONLY on the following data. If information is not in the data, say so.\n\n"
+        f"=== CANDIDATE DATA ===\n{profile_json}"
+    )
+
+
+@router.post("/api/chat/{conversation_id}")
+async def chat_stream(conversation_id: int, body: ChatRequest):
+    db = await get_db()
+
+    # Get conversation and candidate info
+    rows = await db.execute_fetchall(
+        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "JOIN candidates ca ON c.candidate_id = ca.id WHERE c.id = ?",
+        (conversation_id,),
+    )
+    if not rows:
+        return {"error": "Conversation not found"}
+
+    conv = rows[0]
+
+    # Save user message
+    await db.execute(
+        "INSERT INTO messages (conversation_id, role, content) VALUES (?, 'user', ?)",
+        (conversation_id, body.message),
+    )
+    await db.execute(
+        "UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        (conversation_id,),
+    )
+    await db.commit()
+
+    # Build message history
+    system_prompt = _build_system_prompt(conv["candidate_id"], conv["candidate_name"])
+    history = await db.execute_fetchall(
+        "SELECT role, content FROM messages WHERE conversation_id = ? AND role != 'system' ORDER BY created_at",
+        (conversation_id,),
+    )
+    messages = [{"role": "system", "content": system_prompt}]
+    messages.extend({"role": row["role"], "content": row["content"]} for row in history)
+
+    async def event_generator():
+        full_response = ""
+        usage_info = None
+
+        async for chunk in stream_chat(messages, model=body.model):
+            if chunk["type"] == "token":
+                full_response += chunk["content"]
+                yield f"data: {json.dumps(chunk)}\n\n"
+            elif chunk["type"] == "usage":
+                usage_info = chunk
+
+        # Save assistant message
+        await db.execute(
+            "INSERT INTO messages (conversation_id, role, content) VALUES (?, 'assistant', ?)",
+            (conversation_id, full_response),
+        )
+        await db.commit()
+
+        # Log cost
+        if usage_info:
+            await log_request(
+                conversation_id=conversation_id,
+                model_id=body.model,
+                input_tokens=usage_info["input_tokens"],
+                output_tokens=usage_info["output_tokens"],
+            )
+            yield f"data: {json.dumps(usage_info)}\n\n"
+
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
