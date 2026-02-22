@@ -207,12 +207,25 @@ body.work-experience-page {
 }
 
 .usage-progress {
-    height: 0.5rem;
+    height: 1rem;
     background: var(--sidebar-border);
+    position: relative;
 }
 
 .usage-progress .progress-bar {
     background-color: var(--accent) !important;
+}
+
+.usage-progress-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--welcome-text);
+    pointer-events: none;
 }
 
 .usage-progress-labels {

@@ -8,7 +8,7 @@ async def log_request(
     model_id: str,
     input_tokens: int,
     output_tokens: int,
-) -> dict[str, float]:
+) -> dict[str, float | int]:
     """Log an LLM request and compute cost."""
     pricing = get_model_pricing(model_id)
     if pricing is None:
@@ -27,16 +27,21 @@ async def log_request(
         (conversation_id, model_id, input_tokens, output_tokens, cost_usd),
     )
     await db.commit()
-    daily_total_row = await db.execute_fetchall(
+    daily_totals_row = await db.execute_fetchall(
         """
-        SELECT COALESCE(SUM(cost_usd), 0) AS total
+        SELECT
+            COALESCE(SUM(cost_usd), 0) AS total,
+            COALESCE(SUM(input_tokens), 0) AS input_tokens,
+            COALESCE(SUM(output_tokens), 0) AS output_tokens
         FROM llm_requests
-        WHERE cost_usd IS NOT NULL AND DATE(created_at) = DATE('now')
+        WHERE DATE(created_at) = DATE('now')
         """
     )
     return {
         "request_cost_usd": float(cost_usd or 0.0),
-        "daily_total_usd": float(daily_total_row[0]["total"]),
+        "daily_total_usd": float(daily_totals_row[0]["total"]),
+        "daily_input_tokens": int(daily_totals_row[0]["input_tokens"]),
+        "daily_output_tokens": int(daily_totals_row[0]["output_tokens"]),
         "daily_limit_usd": float(settings.max_daily_cost_usd),
     }
 
@@ -135,20 +140,23 @@ async def get_monthly_costs() -> list[dict]:
     ]
 
 
-async def get_today_cost_usage() -> dict[str, float]:
+async def get_today_cost_usage() -> dict[str, float | int]:
     await _backfill_missing_costs()
     db = await get_db()
     row = await db.execute_fetchall(
         """
         SELECT
             COALESCE(SUM(CASE WHEN DATE(created_at) = DATE('now') THEN cost_usd END), 0) AS daily_total,
+            COALESCE(SUM(CASE WHEN DATE(created_at) = DATE('now') THEN input_tokens END), 0) AS daily_input_tokens,
+            COALESCE(SUM(CASE WHEN DATE(created_at) = DATE('now') THEN output_tokens END), 0) AS daily_output_tokens,
             COALESCE(SUM(cost_usd), 0) AS total
         FROM llm_requests
-        WHERE cost_usd IS NOT NULL
         """
     )
     return {
         "daily_total_usd": float(row[0]["daily_total"]),
+        "daily_input_tokens": int(row[0]["daily_input_tokens"]),
+        "daily_output_tokens": int(row[0]["daily_output_tokens"]),
         "total_cost_usd": float(row[0]["total"]),
         "daily_limit_usd": float(settings.max_daily_cost_usd),
     }

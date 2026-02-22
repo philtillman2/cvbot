@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usageSummary = document.getElementById('jobFitUsageSummary');
     const usageTokenText = document.getElementById('jobFitUsageTokenText');
     const usageProgressBar = document.getElementById('jobFitUsageProgressBar');
+    const usageProgressValue = document.getElementById('jobFitUsageProgressValue');
     const usageCurrentCost = document.getElementById('jobFitUsageCurrentCost');
     const usageMaxCost = document.getElementById('jobFitUsageMaxCost');
     const modelStorageKey = 'cvbot.selectedModel';
@@ -59,13 +60,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUsageSummary(usage) {
         const dailyLimit = usage.daily_limit_usd || 0;
         const dailyTotal = usage.daily_total_usd || 0;
-        const pct = dailyLimit > 0 ? Math.min((dailyTotal / dailyLimit) * 100, 100) : 0;
+        const shownInputTokens = usage.daily_input_tokens ?? usage.input_tokens ?? 0;
+        const shownOutputTokens = usage.daily_output_tokens ?? usage.output_tokens ?? 0;
+        const rawPct = dailyLimit > 0 ? (dailyTotal / dailyLimit) * 100 : 0;
+        const pct = Math.min(Math.max(rawPct, dailyTotal > 0 ? 1 : 0), 100);
         usageSummary?.classList.remove('d-none');
         if (usageTokenText) {
-            usageTokenText.textContent =
-                `${usage.input_tokens} in / ${usage.output_tokens} out tokens`;
+            usageTokenText.textContent = `${shownInputTokens} in / ${shownOutputTokens} out tokens`;
         }
-        if (usageCurrentCost) usageCurrentCost.textContent = `$${dailyTotal.toFixed(2)}`;
+        const formattedDailyCost =
+            dailyTotal > 0 && dailyTotal < 0.01 ? `$${dailyTotal.toFixed(5)}` : `$${dailyTotal.toFixed(2)}`;
+        if (usageCurrentCost) usageCurrentCost.textContent = formattedDailyCost;
+        if (usageProgressValue) usageProgressValue.textContent = formattedDailyCost;
         if (usageMaxCost) usageMaxCost.textContent = `$${dailyLimit.toFixed(2)}`;
         if (usageProgressBar) {
             usageProgressBar.style.width = `${pct}%`;
@@ -78,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const resp = await fetch('/api/costs/today');
             if (!resp.ok) return;
             const usage = await resp.json();
-            updateUsageSummary({ ...usage, input_tokens: 0, output_tokens: 0 });
+            updateUsageSummary(usage);
         } catch (_) {}
     }
 

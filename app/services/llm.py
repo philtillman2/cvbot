@@ -84,8 +84,12 @@ async def stream_chat(
                 # Usage info (usually in the final chunk)
                 usage = chunk.get("usage")
                 if usage:
+                    prompt_tokens = usage.get("prompt_tokens", usage.get("input_tokens", 0))
+                    completion_tokens = usage.get(
+                        "completion_tokens", usage.get("output_tokens", 0)
+                    )
                     yield {
                         "type": "usage",
-                        "input_tokens": usage.get("prompt_tokens", 0),
-                        "output_tokens": usage.get("completion_tokens", 0),
+                        "input_tokens": int(prompt_tokens or 0),
+                        "output_tokens": int(completion_tokens or 0),
                     }
