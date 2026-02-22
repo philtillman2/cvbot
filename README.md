@@ -24,10 +24,9 @@ cd cvbot
 # Install dependencies
 uv sync
 
-# Configure environment and app config
-# Create/edit secrets/.env and set:
-# - ENV=dev
-# - OPENROUTER_API_KEY=...
+cp .env.example secrets/.env
+# Add your values for secrets like OPENROUTER_API_KEY their and the ENV value.
+
 # Then adjust config/config-dev.yaml if needed
 
 # Add candidate JSON files to data/candidates/
