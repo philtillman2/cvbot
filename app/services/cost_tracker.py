@@ -140,13 +140,16 @@ async def get_today_cost_usage() -> dict[str, float]:
     db = await get_db()
     row = await db.execute_fetchall(
         """
-        SELECT COALESCE(SUM(cost_usd), 0) AS total
+        SELECT
+            COALESCE(SUM(CASE WHEN DATE(created_at) = DATE('now') THEN cost_usd END), 0) AS daily_total,
+            COALESCE(SUM(cost_usd), 0) AS total
         FROM llm_requests
-        WHERE cost_usd IS NOT NULL AND DATE(created_at) = DATE('now')
+        WHERE cost_usd IS NOT NULL
         """
     )
     return {
-        "daily_total_usd": float(row[0]["total"]),
+        "daily_total_usd": float(row[0]["daily_total"]),
+        "total_cost_usd": float(row[0]["total"]),
         "daily_limit_usd": float(settings.max_daily_cost_usd),
     }
 

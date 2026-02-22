@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    const totalCostCtx = document.getElementById("totalCostChart")?.getContext("2d");
+    const totalTokenCostValue = document.getElementById("totalTokenCostValue");
     const dailyCtx = document.getElementById("dailyChart")?.getContext("2d");
     const monthlyCtx = document.getElementById("monthlyChart")?.getContext("2d");
 
-    if (!dailyCtx || !monthlyCtx) return;
+    if (!totalCostCtx && !dailyCtx && !monthlyCtx) return;
 
     const modelColors = [
         "#a855f7",
@@ -23,6 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     function formatLegendLabel(model, pricing) {
         if (!pricing || pricing.input == null || pricing.output == null) return `${model} ($n/a per 1M)`;
         return `${model} ($${formatPrice(pricing.input)}/$${formatPrice(pricing.output)} per 1M in/out)`;
+    }
+
+    function formatUsd(value) {
+        return `$${Number(value ?? 0).toFixed(6)}`;
     }
 
     function buildStackedDatasets(rows, labelKey) {
@@ -56,6 +62,60 @@ document.addEventListener("DOMContentLoaded", async () => {
             })),
             callsByLabelAndModel,
         };
+    }
+
+    // Total cost circular chart
+    try {
+        if (totalCostCtx) {
+            const monthlyResp = await fetch("/api/costs/monthly");
+            const monthlyData = await monthlyResp.json();
+            const totalsByModel = new Map();
+            for (const row of monthlyData) {
+                totalsByModel.set(
+                    row.model,
+                    (totalsByModel.get(row.model) ?? 0) + Number(row.total ?? 0),
+                );
+            }
+            const labels = [...totalsByModel.keys()];
+            const values = [...totalsByModel.values()];
+            const totalCost = values.reduce((sum, value) => sum + value, 0);
+            if (totalTokenCostValue) totalTokenCostValue.textContent = formatUsd(totalCost);
+            const hasData = values.length > 0;
+
+            new Chart(totalCostCtx, {
+                type: "doughnut",
+                data: {
+                    labels: hasData ? labels : ["No data"],
+                    datasets: [{
+                        data: hasData ? values : [1],
+                        backgroundColor: hasData
+                            ? labels.map((_, index) => modelColors[index % modelColors.length] + "99")
+                            : ["#e5e7eb"],
+                        borderColor: hasData
+                            ? labels.map((_, index) => modelColors[index % modelColors.length])
+                            : ["#d1d5db"],
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 4,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => hasData
+                                    ? `${context.label}: ${formatUsd(context.parsed)}`
+                                    : "No model cost data",
+                            },
+                        },
+                    },
+                },
+            });
+        }
+    } catch (e) {
+        console.error("Failed to load total cost:", e);
     }
 
     // Daily cumulative bar chart
