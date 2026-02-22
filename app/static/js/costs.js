@@ -4,35 +4,91 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!dailyCtx || !monthlyCtx) return;
 
-    const accentColor = getComputedStyle(document.documentElement)
-        .getPropertyValue("--accent")
-        .trim() || "#a855f7";
+    const modelColors = [
+        "#a855f7",
+        "#3b82f6",
+        "#10b981",
+        "#f59e0b",
+        "#ef4444",
+        "#8b5cf6",
+        "#06b6d4",
+        "#84cc16",
+    ];
+
+    function formatPrice(price) {
+        if (price == null) return "n/a";
+        return Number(price).toFixed(2);
+    }
+
+    function formatLegendLabel(model, pricing) {
+        if (!pricing || pricing.input == null || pricing.output == null) return `${model} ($n/a per 1M)`;
+        return `${model} ($${formatPrice(pricing.input)}/$${formatPrice(pricing.output)} per 1M in/out)`;
+    }
+
+    function buildStackedDatasets(rows, labelKey) {
+        const labels = [...new Set(rows.map((row) => row[labelKey]))];
+        const models = [...new Set(rows.map((row) => row.model))];
+        const totalsByLabelAndModel = new Map(
+            rows.map((row) => [`${row[labelKey]}::${row.model}`, row.total]),
+        );
+        const callsByLabelAndModel = new Map(
+            rows.map((row) => [`${row[labelKey]}::${row.model}`, row.calls]),
+        );
+        const pricingByModel = new Map(
+            rows.map((row) => [
+                row.model,
+                {
+                    input: row.input_cost_per_1m,
+                    output: row.output_cost_per_1m,
+                },
+            ]),
+        );
+
+        return {
+            labels,
+            datasets: models.map((model, index) => ({
+                label: formatLegendLabel(model, pricingByModel.get(model)),
+                modelId: model,
+                data: labels.map((label) => totalsByLabelAndModel.get(`${label}::${model}`) ?? 0),
+                backgroundColor: modelColors[index % modelColors.length] + "99",
+                borderColor: modelColors[index % modelColors.length],
+                borderWidth: 1,
+            })),
+            callsByLabelAndModel,
+        };
+    }
 
     // Daily cumulative bar chart
     try {
         const dailyResp = await fetch("/api/costs/daily");
         const dailyData = await dailyResp.json();
 
+        const dailyChartData = buildStackedDatasets(dailyData, "date");
         new Chart(dailyCtx, {
             type: "bar",
             data: {
-                labels: dailyData.map((d) => d.date),
-                datasets: [
-                    {
-                        label: "Cumulative Cost (USD)",
-                        data: dailyData.map((d) => d.cumulative),
-                        backgroundColor: accentColor + "99",
-                        borderColor: accentColor,
-                        borderWidth: 1,
-                    },
-                ],
+                labels: dailyChartData.labels,
+                datasets: dailyChartData.datasets,
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const model = context.dataset.modelId ?? context.dataset.label;
+                                const calls = dailyChartData.callsByLabelAndModel.get(
+                                    `${context.label}::${model}`,
+                                ) ?? 0;
+                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls)`;
+                            },
+                        },
+                    },
+                },
                 scales: {
-                    y: { beginAtZero: true, title: { display: true, text: "USD" } },
-                    x: { title: { display: true, text: "Date" } },
+                    y: { beginAtZero: true, stacked: true, title: { display: true, text: "USD" } },
+                    x: { stacked: true, title: { display: true, text: "Date" } },
                 },
             },
         });
@@ -45,26 +101,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         const monthlyResp = await fetch("/api/costs/monthly");
         const monthlyData = await monthlyResp.json();
 
+        const monthlyChartData = buildStackedDatasets(monthlyData, "month");
         new Chart(monthlyCtx, {
             type: "bar",
             data: {
-                labels: monthlyData.map((d) => d.month),
-                datasets: [
-                    {
-                        label: "Monthly Cost (USD)",
-                        data: monthlyData.map((d) => d.total),
-                        backgroundColor: accentColor + "99",
-                        borderColor: accentColor,
-                        borderWidth: 1,
-                    },
-                ],
+                labels: monthlyChartData.labels,
+                datasets: monthlyChartData.datasets,
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const model = context.dataset.modelId ?? context.dataset.label;
+                                const calls = monthlyChartData.callsByLabelAndModel.get(
+                                    `${context.label}::${model}`,
+                                ) ?? 0;
+                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls)`;
+                            },
+                        },
+                    },
+                },
                 scales: {
-                    y: { beginAtZero: true, title: { display: true, text: "USD" } },
-                    x: { title: { display: true, text: "Month" } },
+                    y: { beginAtZero: true, stacked: true, title: { display: true, text: "USD" } },
+                    x: { stacked: true, title: { display: true, text: "Month" } },
                 },
             },
         });

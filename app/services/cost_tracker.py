@@ -76,19 +76,31 @@ async def get_daily_costs() -> list[dict]:
     db = await get_db()
     rows = await db.execute_fetchall(
         """
-        SELECT DATE(created_at) as day, SUM(cost_usd) as total
+        SELECT DATE(created_at) as day, model_id, SUM(cost_usd) as total, COUNT(*) as calls
         FROM llm_requests
         WHERE cost_usd IS NOT NULL
-        GROUP BY DATE(created_at)
-        ORDER BY day
+        GROUP BY DATE(created_at), model_id
+        ORDER BY day, model_id
         """
     )
-    cumulative = 0.0
-    result = []
-    for row in rows:
-        cumulative += row["total"]
-        result.append({"date": row["day"], "cumulative": round(cumulative, 6)})
-    return result
+    model_ids = {row["model_id"] for row in rows}
+    if any(get_model_pricing(model_id) is None for model_id in model_ids):
+        await fetch_models()
+    return [
+        {
+            "date": row["day"],
+            "model": row["model_id"],
+            "total": round(row["total"], 6),
+            "calls": int(row["calls"]),
+            "input_cost_per_1m": round((pricing["input"] * 1_000_000), 6)
+            if (pricing := get_model_pricing(row["model_id"]))
+            else None,
+            "output_cost_per_1m": round((pricing["output"] * 1_000_000), 6)
+            if pricing
+            else None,
+        }
+        for row in rows
+    ]
 
 
 async def get_monthly_costs() -> list[dict]:
@@ -96,14 +108,31 @@ async def get_monthly_costs() -> list[dict]:
     db = await get_db()
     rows = await db.execute_fetchall(
         """
-        SELECT strftime('%Y-%m', created_at) as month, SUM(cost_usd) as total
+        SELECT strftime('%Y-%m', created_at) as month, model_id, SUM(cost_usd) as total, COUNT(*) as calls
         FROM llm_requests
         WHERE cost_usd IS NOT NULL
-        GROUP BY strftime('%Y-%m', created_at)
-        ORDER BY month
+        GROUP BY strftime('%Y-%m', created_at), model_id
+        ORDER BY month, model_id
         """
     )
-    return [{"month": row["month"], "total": round(row["total"], 6)} for row in rows]
+    model_ids = {row["model_id"] for row in rows}
+    if any(get_model_pricing(model_id) is None for model_id in model_ids):
+        await fetch_models()
+    return [
+        {
+            "month": row["month"],
+            "model": row["model_id"],
+            "total": round(row["total"], 6),
+            "calls": int(row["calls"]),
+            "input_cost_per_1m": round((pricing["input"] * 1_000_000), 6)
+            if (pricing := get_model_pricing(row["model_id"]))
+            else None,
+            "output_cost_per_1m": round((pricing["output"] * 1_000_000), 6)
+            if pricing
+            else None,
+        }
+        for row in rows
+    ]
 
 
 async def get_today_cost_usage() -> dict[str, float]:
