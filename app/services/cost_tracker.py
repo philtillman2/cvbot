@@ -81,7 +81,13 @@ async def get_daily_costs() -> list[dict]:
     db = await get_db()
     rows = await db.execute_fetchall(
         """
-        SELECT DATE(created_at) as day, model_id, SUM(cost_usd) as total, COUNT(*) as calls
+        SELECT
+            DATE(created_at) as day,
+            model_id,
+            SUM(cost_usd) as total,
+            COUNT(*) as calls,
+            COALESCE(SUM(input_tokens), 0) as input_tokens,
+            COALESCE(SUM(output_tokens), 0) as output_tokens
         FROM llm_requests
         WHERE cost_usd IS NOT NULL
         GROUP BY DATE(created_at), model_id
@@ -97,6 +103,9 @@ async def get_daily_costs() -> list[dict]:
             "model": row["model_id"],
             "total": round(row["total"], 6),
             "calls": int(row["calls"]),
+            "input_tokens": int(row["input_tokens"]),
+            "output_tokens": int(row["output_tokens"]),
+            "total_tokens": int(row["input_tokens"]) + int(row["output_tokens"]),
             "input_cost_per_1m": round((pricing["input"] * 1_000_000), 6)
             if (pricing := get_model_pricing(row["model_id"]))
             else None,
@@ -113,7 +122,13 @@ async def get_monthly_costs() -> list[dict]:
     db = await get_db()
     rows = await db.execute_fetchall(
         """
-        SELECT strftime('%Y-%m', created_at) as month, model_id, SUM(cost_usd) as total, COUNT(*) as calls
+        SELECT
+            strftime('%Y-%m', created_at) as month,
+            model_id,
+            SUM(cost_usd) as total,
+            COUNT(*) as calls,
+            COALESCE(SUM(input_tokens), 0) as input_tokens,
+            COALESCE(SUM(output_tokens), 0) as output_tokens
         FROM llm_requests
         WHERE cost_usd IS NOT NULL
         GROUP BY strftime('%Y-%m', created_at), model_id
@@ -129,6 +144,9 @@ async def get_monthly_costs() -> list[dict]:
             "model": row["model_id"],
             "total": round(row["total"], 6),
             "calls": int(row["calls"]),
+            "input_tokens": int(row["input_tokens"]),
+            "output_tokens": int(row["output_tokens"]),
+            "total_tokens": int(row["input_tokens"]) + int(row["output_tokens"]),
             "input_cost_per_1m": round((pricing["input"] * 1_000_000), 6)
             if (pricing := get_model_pricing(row["model_id"]))
             else None,

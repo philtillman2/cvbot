@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const callsByLabelAndModel = new Map(
             rows.map((row) => [`${row[labelKey]}::${row.model}`, row.calls]),
         );
+        const tokensByLabelAndModel = new Map(
+            rows.map((row) => [`${row[labelKey]}::${row.model}`, row.total_tokens ?? 0]),
+        );
         const pricingByModel = new Map(
             rows.map((row) => [
                 row.model,
@@ -61,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 borderWidth: 1,
             })),
             callsByLabelAndModel,
+            tokensByLabelAndModel,
         };
     }
 
@@ -70,14 +74,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             const monthlyResp = await fetch("/api/costs/monthly");
             const monthlyData = await monthlyResp.json();
             const totalsByModel = new Map();
+            const callsByModel = new Map();
+            const tokensByModel = new Map();
             for (const row of monthlyData) {
                 totalsByModel.set(
                     row.model,
                     (totalsByModel.get(row.model) ?? 0) + Number(row.total ?? 0),
                 );
+                callsByModel.set(
+                    row.model,
+                    (callsByModel.get(row.model) ?? 0) + Number(row.calls ?? 0),
+                );
+                tokensByModel.set(
+                    row.model,
+                    (tokensByModel.get(row.model) ?? 0) + Number(row.total_tokens ?? 0),
+                );
             }
             const labels = [...totalsByModel.keys()];
             const values = [...totalsByModel.values()];
+            const calls = labels.map((model) => callsByModel.get(model) ?? 0);
+            const tokens = labels.map((model) => tokensByModel.get(model) ?? 0);
             const totalCost = values.reduce((sum, value) => sum + value, 0);
             if (totalTokenCostValue) totalTokenCostValue.textContent = formatUsd(totalCost);
             const hasData = values.length > 0;
@@ -105,9 +121,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: (context) => hasData
-                                    ? `${context.label}: ${formatUsd(context.parsed)}`
-                                    : "No model cost data",
+                                label: (context) => {
+                                    if (!hasData) return "No model cost data";
+                                    const index = context.dataIndex;
+                                    return `${context.label}: ${formatUsd(context.parsed)} (${calls[index]} calls, ${tokens[index]} tokens)`;
+                                },
                             },
                         },
                     },
@@ -141,7 +159,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 const calls = dailyChartData.callsByLabelAndModel.get(
                                     `${context.label}::${model}`,
                                 ) ?? 0;
-                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls)`;
+                                const tokens = dailyChartData.tokensByLabelAndModel.get(
+                                    `${context.label}::${model}`,
+                                ) ?? 0;
+                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls, ${tokens} tokens)`;
                             },
                         },
                     },
@@ -179,7 +200,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 const calls = monthlyChartData.callsByLabelAndModel.get(
                                     `${context.label}::${model}`,
                                 ) ?? 0;
-                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls)`;
+                                const tokens = monthlyChartData.tokensByLabelAndModel.get(
+                                    `${context.label}::${model}`,
+                                ) ?? 0;
+                                return `${model}: $${context.parsed.y.toFixed(6)} (${calls} calls, ${tokens} tokens)`;
                             },
                         },
                     },
