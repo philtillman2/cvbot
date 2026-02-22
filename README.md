@@ -51,7 +51,7 @@ Real-time token-by-token LLM output via Server-Sent Events
 ### Mobile view
 Mobile optimized with bootstrap
 
-    <img src="images/interview_mobile_view.png" height="400">
+![interview_mobile_view](images/interview_mobile_view.png)
 ### Light/Dark theme
 Auto-detects system preference, with manual toggle
 ### Job fit analysis tool
