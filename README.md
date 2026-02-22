@@ -42,7 +42,7 @@ Open http://localhost:8000 in your browser.
 ## Features
 
 ### Interview with candidate experience
-Select a candidate and ask questions about their work history, skills, education
+Select a candidate and ask questions about their work history, skills, education. Also, we limit the daily spend that costs don't run out of control and cost progress bar to keep track of how much more you have to go.
 
 ![interview](images/interview.png)
 ### Streaming responses
