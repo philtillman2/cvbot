@@ -44,7 +44,7 @@ def _build_job_fit_prompt(candidate_id: str, display_name: str, job_description:
 async def job_fit_page(request: Request):
     db = await get_db()
     candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
-    return templates.TemplateResponse("job_fit.html", {
+    return templates.TemplateResponse("job_fit.html.j2", {
         "request": request,
         "candidates": candidates,
         "daily_limit_usd": settings.max_daily_cost_usd,

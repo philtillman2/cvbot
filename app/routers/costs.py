@@ -10,7 +10,7 @@ templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "
 
 @router.get("/costs")
 async def costs_page(request: Request):
-    return templates.TemplateResponse("costs.html", {"request": request})
+    return templates.TemplateResponse("costs.html.j2", {"request": request})
 
 
 @router.get("/api/costs/daily")

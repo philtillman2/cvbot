@@ -29,7 +29,7 @@ async def chat_page(request: Request):
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
     candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
-    return templates.TemplateResponse("chat.html", {
+    return templates.TemplateResponse("chat.html.j2", {
         "request": request,
         "conversations": conversations,
         "candidates": candidates,
@@ -57,7 +57,7 @@ async def chat_page_with_conversation(request: Request, conversation_id: int):
         "SELECT * FROM messages WHERE conversation_id = ? AND role != 'system' ORDER BY id",
         (conversation_id,),
     )
-    return templates.TemplateResponse("chat.html", {
+    return templates.TemplateResponse("chat.html.j2", {
         "request": request,
         "conversations": conversations,
         "candidates": candidates,
