@@ -1,5 +1,5 @@
 {% extends "base.html.j2" %}
-{% block title %}CVbot — Chat{% endblock %}
+{% block title %}CVbot — Interview{% endblock %}
 
 {% block body %}
 <div class="app-layout">
@@ -13,7 +13,7 @@
         </div>
 
         <button class="btn btn-primary w-100 mb-3" id="newChatBtn">
-            <i class="bi bi-plus-lg me-1"></i> New Chat
+            <i class="bi bi-plus-lg me-1"></i> New Interview
         </button>
 
         <div class="mb-3">
@@ -33,7 +33,7 @@
             <a href="/chat/{{ conv['id'] }}"
                class="conversation-item {% if active_conversation and active_conversation['id'] == conv['id'] %}active{% endif %}"
                data-id="{{ conv['id'] }}">
-                <span class="conv-title">{{ conv['title'] or 'New Chat' }}</span>
+                <span class="conv-title">{{ conv['title'] or 'New Interview' }}</span>
                 <span class="conv-actions">
                     <button class="btn btn-sm btn-link text-muted rename-conv p-0" data-id="{{ conv['id'] }}">
                         <i class="bi bi-pencil-square"></i>
@@ -94,7 +94,7 @@
             {% if not active_conversation %}
             <div class="welcome-screen">
                 <h2>How can I help you?</h2>
-                <p class="text-muted">Select a candidate and start a conversation to explore their work experience.</p>
+                <p class="text-muted">Select a candidate and start an interview to explore their work experience.</p>
             </div>
             {% else %}
                 {% for msg in messages %}

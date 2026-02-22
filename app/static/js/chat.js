@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sendBtn.addEventListener("click", sendMessage);
 
-    // New Chat
+    // New Interview
     newChatBtn.addEventListener("click", async () => {
         const candidateId = candidateSelect.value;
         if (!candidateId) return;
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const titleEl = item?.querySelector(".conv-title");
         if (!titleEl || !id || titleEl.dataset.editing === "true") return;
         titleEl.dataset.editing = "true";
-        titleEl.dataset.originalTitle = titleEl.textContent.trim() || "New Chat";
+        titleEl.dataset.originalTitle = titleEl.textContent.trim() || "New Interview";
         titleEl.setAttribute("contenteditable", "true");
         titleEl.classList.add("editing");
         titleEl.focus();
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         titleEl.dataset.saving = "true";
         const item = titleEl.closest(".conversation-item");
         const id = item?.dataset?.id;
-        const originalTitle = titleEl.dataset.originalTitle || "New Chat";
+        const originalTitle = titleEl.dataset.originalTitle || "New Interview";
         const nextTitle = titleEl.textContent.trim();
         titleEl.removeAttribute("contenteditable");
         titleEl.classList.remove("editing");
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         const conv = await resp.json();
-        titleEl.textContent = conv.title || "New Chat";
+        titleEl.textContent = conv.title || "New Interview";
         titleEl.dataset.saving = "false";
     }
 

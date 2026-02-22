@@ -10,7 +10,7 @@ async def create_conversation(body: ConversationCreate):
     db = await get_db()
     cursor = await db.execute(
         "INSERT INTO conversations (candidate_id, title) VALUES (?, ?)",
-        (body.candidate_id, "New Chat"),
+        (body.candidate_id, "New Interview"),
     )
     await db.commit()
     conv_id = cursor.lastrowid
