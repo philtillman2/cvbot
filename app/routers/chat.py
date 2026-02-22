@@ -14,6 +14,7 @@ from app.models import ChatRequest
 
 router = APIRouter()
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
+LAST_CHAT_COOKIE = "cvbot.last_chat_id"
 
 
 @router.get("/")
@@ -24,6 +25,14 @@ async def index():
 @router.get("/chat")
 async def chat_page(request: Request):
     db = await get_db()
+    last_chat_id = request.cookies.get(LAST_CHAT_COOKIE)
+    if last_chat_id and last_chat_id.isdigit():
+        existing = await db.execute_fetchall(
+            "SELECT id FROM conversations WHERE id = ?",
+            (int(last_chat_id),),
+        )
+        if existing:
+            return RedirectResponse(url=f"/chat/{last_chat_id}")
     conversations = await db.execute_fetchall(
         "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
@@ -58,7 +67,7 @@ async def chat_page_with_conversation(request: Request, conversation_id: int):
         "SELECT * FROM messages WHERE conversation_id = ? AND role != 'system' ORDER BY id",
         (conversation_id,),
     )
-    return templates.TemplateResponse("chat.html.j2", {
+    response = templates.TemplateResponse("chat.html.j2", {
         "request": request,
         "conversations": conversations,
         "candidates": candidates,
@@ -67,6 +76,8 @@ async def chat_page_with_conversation(request: Request, conversation_id: int):
         "daily_limit_usd": settings.max_daily_cost_usd,\
         "models": settings.models,
     })
+    response.set_cookie(key=LAST_CHAT_COOKIE, value=str(conversation_id), httponly=True, samesite="lax")
+    return response
 
 
 def _build_system_prompt(candidate_id: str, display_name: str) -> str:
