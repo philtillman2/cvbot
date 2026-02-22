@@ -183,11 +183,6 @@ body.work-experience-page {
     font-size: 1rem;
 }
 
-.model-select {
-    width: auto;
-    min-width: 180px;
-}
-
 .usage-summary {
     padding: 0.65rem 1.5rem 0.5rem;
     border-bottom: 1px solid var(--topbar-border);
@@ -327,14 +322,13 @@ body.work-experience-page {
 
 .chat-input-wrapper {
     display: flex;
-    align-items: flex-end;
-    gap: 0.5rem;
+    flex-direction: column;
     max-width: 800px;
     margin: 0 auto;
     background: var(--chat-input-bg);
     border: 1px solid var(--sidebar-border);
     border-radius: 1rem;
-    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    padding: 0.5rem;
 }
 
 .chat-input-wrapper .form-control {
@@ -343,10 +337,56 @@ body.work-experience-page {
     resize: none;
     box-shadow: none;
     max-height: 150px;
+    padding-left: 0.5rem;
 }
 
 .chat-input-wrapper .form-control:focus {
     box-shadow: none;
+}
+
+.chat-input-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+}
+
+.input-model-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    color: var(--welcome-text);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.2rem 1.25rem 0.2rem 0.4rem;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 16 16'%3E%3Cpath fill='%236c757d' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.25rem center;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: background-color 0.15s;
+}
+
+.input-model-select:hover {
+    background-color: var(--sidebar-border);
+}
+
+.input-model-select:focus {
+    outline: none;
+    background-color: var(--sidebar-border);
+}
+
+.jobfit-input-wrapper {
+    max-width: none;
+}
+
+.jobfit-input-wrapper .form-control {
+    max-height: none;
 }
 
 .btn-primary {

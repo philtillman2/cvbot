@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageProgressBar = document.getElementById("chatUsageProgressBar");
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
+    const modelStorageKey = "cvbot.selectedModel";
 
     let conversationId = null;
     let editingMessageId = null;
@@ -39,6 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.addEventListener("input", () => {
         chatInput.style.height = "auto";
         chatInput.style.height = Math.min(chatInput.scrollHeight, 150) + "px";
+    });
+
+    const savedModel = localStorage.getItem(modelStorageKey);
+    if (savedModel && [...modelSelect.options].some((option) => option.value === savedModel)) {
+        modelSelect.value = savedModel;
+    }
+    modelSelect.addEventListener("change", () => {
+        localStorage.setItem(modelStorageKey, modelSelect.value);
     });
 
     // Send on Enter (Shift+Enter for newline)

@@ -26,32 +26,31 @@
     <div class="card mb-4">
         <div class="card-body">
             <form id="jobFitForm">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="candidateSelect" class="form-label">Candidate</label>
-                        <select class="form-select" id="candidateSelect" required>
-                            {% for c in candidates %}
-                            <option value="{{ c['id'] }}">{{ c['display_name'] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="modelSelect" class="form-label">Model</label>
-                        <select class="form-select" id="modelSelect">
-                            {%- for model_key in models %}
-                            <option value="{{model_key}}">{{models[model_key]}}</option>
-                            {%- endfor %}
-                        </select>
-                    </div>
+                <div class="mb-3">
+                    <label for="candidateSelect" class="form-label">Candidate</label>
+                    <select class="form-select" id="candidateSelect" required>
+                        {% for c in candidates %}
+                        <option value="{{ c['id'] }}">{{ c['display_name'] }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="jobDescription" class="form-label">Job Description</label>
-                    <textarea class="form-control" id="jobDescription" rows="10"
-                              placeholder="Paste the full job description here..." required></textarea>
+                    <div class="chat-input-wrapper jobfit-input-wrapper">
+                        <textarea class="form-control" id="jobDescription" rows="10"
+                                  placeholder="Paste the full job description here..." required></textarea>
+                        <div class="chat-input-toolbar">
+                            <select class="input-model-select" id="modelSelect">
+                                {%- for model_key in models %}
+                                <option value="{{model_key}}">{{models[model_key]}}</option>
+                                {%- endfor %}
+                            </select>
+                            <button type="submit" class="btn btn-primary send-btn" id="analyzeBtn">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary" id="analyzeBtn">
-                    <i class="bi bi-search me-1"></i> Analyze Fit
-                </button>
             </form>
         </div>
     </div>

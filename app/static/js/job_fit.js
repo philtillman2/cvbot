@@ -46,6 +46,7 @@ function layoutResults(md) {
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('jobFitForm');
     const analyzeBtn = document.getElementById('analyzeBtn');
+    const modelSelect = document.getElementById('modelSelect');
     const resultsSection = document.getElementById('resultsSection');
     const resultsContent = document.getElementById('resultsContent');
     const usageSummary = document.getElementById('jobFitUsageSummary');
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usageProgressBar = document.getElementById('jobFitUsageProgressBar');
     const usageCurrentCost = document.getElementById('jobFitUsageCurrentCost');
     const usageMaxCost = document.getElementById('jobFitUsageMaxCost');
+    const modelStorageKey = 'cvbot.selectedModel';
 
     function updateUsageSummary(usage) {
         const dailyLimit = usage.daily_limit_usd || 0;
@@ -82,11 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeUsageSummary();
 
+    const savedModel = localStorage.getItem(modelStorageKey);
+    if (savedModel && [...modelSelect.options].some((option) => option.value === savedModel)) {
+        modelSelect.value = savedModel;
+    }
+    modelSelect.addEventListener('change', () => {
+        localStorage.setItem(modelStorageKey, modelSelect.value);
+    });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const candidateId = document.getElementById('candidateSelect').value;
-        const model = document.getElementById('modelSelect').value;
+        const model = modelSelect.value;
         const jobDescription = document.getElementById('jobDescription').value.trim();
 
         if (!jobDescription) return;

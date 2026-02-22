@@ -88,11 +88,6 @@
                         <span id="chatUsageMaxCost">${{ '%.2f'|format(daily_limit_usd) }}</span>
                     </div>
                 </div>
-                <select class="form-select form-select-sm model-select" id="modelSelect">
-                    {%- for model_key in models %}
-                    <option value="{{model_key}}">{{models[model_key]}}</option>
-                    {%- endfor %}
-                </select>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -119,10 +114,17 @@
             <div class="chat-input-wrapper">
                 <textarea class="form-control" id="chatInput" placeholder="Type your message here..."
                           rows="1" {% if not active_conversation %}disabled{% endif %}></textarea>
-                <button class="btn btn-primary send-btn" id="sendBtn"
-                        {% if not active_conversation %}disabled{% endif %}>
-                    <i class="bi bi-arrow-up"></i>
-                </button>
+                <div class="chat-input-toolbar">
+                    <select class="input-model-select" id="modelSelect">
+                        {%- for model_key in models %}
+                        <option value="{{model_key}}">{{models[model_key]}}</option>
+                        {%- endfor %}
+                    </select>
+                    <button class="btn btn-primary send-btn" id="sendBtn"
+                            {% if not active_conversation %}disabled{% endif %}>
+                        <i class="bi bi-arrow-up"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </main>
