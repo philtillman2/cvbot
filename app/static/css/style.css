@@ -329,6 +329,11 @@ body.work-experience-page {
     border: 1px solid var(--sidebar-border);
     border-radius: 1rem;
     padding: 0.5rem;
+    transition: border-color 0.15s ease;
+}
+
+.chat-input-wrapper:focus-within {
+    border-color: var(--accent);
 }
 
 .chat-input-wrapper .form-control {
