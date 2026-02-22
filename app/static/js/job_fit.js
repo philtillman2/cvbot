@@ -2,6 +2,12 @@
  * Split the final markdown into sections and render strengths/weaknesses
  * as side-by-side cards, keeping the rest as normal markdown.
  */
+function parseMarkdownSafe(markdown) {
+    if (typeof marked === 'undefined') return markdown;
+    const html = marked.parse(markdown);
+    return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html;
+}
+
 function layoutResults(md) {
     // Split on h2 headers, keeping the header text
     const parts = md.split(/^## /m);
@@ -15,7 +21,7 @@ function layoutResults(md) {
         sections[title] = body;
     }
 
-    let html = marked.parse(intro);
+    let html = parseMarkdownSafe(intro);
 
     // Find the strengths and weaknesses sections (flexible matching)
     const strengthKey = Object.keys(sections).find(k => /strength|pros/i.test(k));
@@ -25,11 +31,11 @@ function layoutResults(md) {
         html += '<div class="fit-cards-row">';
         html += `<div class="fit-card fit-card-strengths">
             <div class="fit-card-header"><i class="bi bi-hand-thumbs-up-fill me-2"></i>${strengthKey}</div>
-            <div class="fit-card-body">${marked.parse(sections[strengthKey])}</div>
+            <div class="fit-card-body">${parseMarkdownSafe(sections[strengthKey])}</div>
         </div>`;
         html += `<div class="fit-card fit-card-weaknesses">
             <div class="fit-card-header"><i class="bi bi-hand-thumbs-down-fill me-2"></i>${weaknessKey}</div>
-            <div class="fit-card-body">${marked.parse(sections[weaknessKey])}</div>
+            <div class="fit-card-body">${parseMarkdownSafe(sections[weaknessKey])}</div>
         </div>`;
         html += '</div>';
     }
@@ -37,7 +43,7 @@ function layoutResults(md) {
     // Render remaining sections (Overall Assessment, Verdict, etc.)
     for (const [title, body] of Object.entries(sections)) {
         if (title === strengthKey || title === weaknessKey) continue;
-        html += marked.parse(`## ${title}\n${body}`);
+        html += parseMarkdownSafe(`## ${title}\n${body}`);
     }
 
     return html;
@@ -145,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const chunk = JSON.parse(data);
                         if (chunk.type === 'token') {
                             fullText += chunk.content;
-                            resultsContent.innerHTML = marked.parse(fullText) +
+                            resultsContent.innerHTML = parseMarkdownSafe(fullText) +
                                 '<span class="streaming-cursor"></span>';
                         } else if (chunk.type === 'usage') {
                             updateUsageSummary(chunk);

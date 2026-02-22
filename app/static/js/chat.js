@@ -20,6 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let conversationId = null;
     let editingMessageId = null;
 
+    function parseMarkdownSafe(markdown) {
+        if (typeof marked === "undefined") return markdown;
+        const html = marked.parse(markdown);
+        return typeof DOMPurify !== "undefined" ? DOMPurify.sanitize(html) : html;
+    }
+
     // Extract conversation ID from URL
     const pathMatch = window.location.pathname.match(/^\/chat\/(\d+)$/);
     if (pathMatch) {
@@ -253,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Render markdown in existing messages
     document.querySelectorAll(".message-assistant .message-content").forEach((el) => {
         if (typeof marked !== "undefined") {
-            el.innerHTML = marked.parse(el.textContent);
+            el.innerHTML = parseMarkdownSafe(el.textContent);
         }
     });
     initializeUsageSummary();
@@ -346,7 +352,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             fullText += data.content;
                             const contentEl = assistantDiv.querySelector(".message-content");
                             if (typeof marked !== "undefined") {
-                                contentEl.innerHTML = marked.parse(fullText);
+                                contentEl.innerHTML = parseMarkdownSafe(fullText);
                             } else {
                                 contentEl.textContent = fullText;
                             }
@@ -379,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Final markdown render
             const contentEl = assistantDiv.querySelector(".message-content");
             if (typeof marked !== "undefined" && fullText) {
-                contentEl.innerHTML = marked.parse(fullText);
+                contentEl.innerHTML = parseMarkdownSafe(fullText);
             }
         } catch (err) {
             if (isEdit && userDiv) {
@@ -463,7 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
         contentDiv.className = "message-content";
 
         if (role === "assistant" && typeof marked !== "undefined" && content) {
-            contentDiv.innerHTML = marked.parse(content);
+            contentDiv.innerHTML = parseMarkdownSafe(content);
         } else {
             contentDiv.textContent = content;
         }
