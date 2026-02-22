@@ -36,6 +36,7 @@ async def chat_page(request: Request):
         "active_conversation": None,
         "messages": [],
         "daily_limit_usd": settings.max_daily_cost_usd,
+        "models": settings.models,
     })
 
 
@@ -63,7 +64,8 @@ async def chat_page_with_conversation(request: Request, conversation_id: int):
         "candidates": candidates,
         "active_conversation": active_conversation,
         "messages": messages,
-        "daily_limit_usd": settings.max_daily_cost_usd,
+        "daily_limit_usd": settings.max_daily_cost_usd,\
+        "models": settings.models,
     })
 
 

@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     db_path: str = "cvbot.db"
     data_dir: str = "data/candidates"
     env: str = "dev"
-
+    models: dict[str, str] = {}
     class Config:
         env_file = "secrets/.env"
 

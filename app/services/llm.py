@@ -48,6 +48,8 @@ async def stream_chat(
     Stream chat completion from OpenRouter.
     Yields dicts: {"type": "token", "content": "..."} or {"type": "usage", ...}
     """
+    if model not in settings.models:
+        raise ValueError(f"Model '{model}' not allowed. Must be one of {settings.models}")
     payload = {
         "model": model,
         "messages": messages,

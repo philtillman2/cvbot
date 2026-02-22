@@ -48,6 +48,7 @@ async def job_fit_page(request: Request):
         "request": request,
         "candidates": candidates,
         "daily_limit_usd": settings.max_daily_cost_usd,
+        "models": settings.models,
     })
 
 
