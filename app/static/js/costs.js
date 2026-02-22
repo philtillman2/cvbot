@@ -8,23 +8,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         .getPropertyValue("--accent")
         .trim() || "#a855f7";
 
-    // Daily cumulative line chart
+    // Daily cumulative bar chart
     try {
         const dailyResp = await fetch("/api/costs/daily");
         const dailyData = await dailyResp.json();
 
         new Chart(dailyCtx, {
-            type: "line",
+            type: "bar",
             data: {
                 labels: dailyData.map((d) => d.date),
                 datasets: [
                     {
                         label: "Cumulative Cost (USD)",
                         data: dailyData.map((d) => d.cumulative),
+                        backgroundColor: accentColor + "99",
                         borderColor: accentColor,
-                        backgroundColor: accentColor + "33",
-                        fill: true,
-                        tension: 0.3,
+                        borderWidth: 1,
                     },
                 ],
             },
