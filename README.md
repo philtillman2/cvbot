@@ -41,13 +41,22 @@ Open http://localhost:8000 in your browser.
 
 ## Features
 
-- **Chat with candidate experience**: Select a candidate and ask questions about their work history, skills, education
+- **Interview with candidate experience**: Select a candidate and ask questions about their work history, skills, education
 - **Streaming responses**: Real-time token-by-token LLM output via Server-Sent Events
+    ![interview](images/interview.png)
+- **Mobile view**: Mobile optimized with bootstrap
+
+    <img src="images/interview_mobile_view.png" height="400">
 - **Light/Dark theme**: Auto-detects system preference, with manual toggle
 - **Job fit analysis page**: Paste a job description and get a structured fit assessment with overall verdict, plus side-by-side strengths/pros and weaknesses/cons cards
+    ![job_fit1](images/job_fit1.png)
+    ![job_fit2](images/job_fit2.png)
+    ![job_fit3](images/job_fit3.png)
 - **Cost dashboard**: Track LLM usage with daily cumulative line chart and monthly bar chart
+    ![cost_dashboard](images/cost_dashboard.png)
 - **Multiple models**: Choose from GPT-4o, Claude, Gemini via OpenRouter
-
+- **View work experience**: View the source data.
+    ![work_experience](images/work_experience.png)
 ## Project Structure
 
 ```
