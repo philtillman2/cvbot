@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContent.innerHTML = '';
         renderStreamingResults(resultsContent, '', true);
         analyzeBtn.disabled = true;
-        analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Analyzing...';
+        analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
 
         let fullText = '';
 
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderStreamingResults(resultsContent, fullText, false);
         analyzeBtn.disabled = false;
-        analyzeBtn.innerHTML = '<i class="bi bi-search me-1"></i> Analyze Fit';
+        analyzeBtn.innerHTML = '<i class="bi bi-search me-1"></i>';
 
         // Scroll to results
         resultsSection.scrollIntoView({ behavior: 'smooth' });
