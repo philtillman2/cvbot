@@ -30,7 +30,7 @@ cp .env.example secrets/.env
 # Then adjust config/config-dev.yaml if needed
 
 # Add candidate JSON files to data/candidates/
-# (see plans/CVbot prompt.md for the JSON schema)
+# (see example JSON schema in data/candidates/)
 
 # Run the server
 uv run uvicorn app.main:app --reload --port 8000
