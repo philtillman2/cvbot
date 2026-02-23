@@ -1,52 +1,82 @@
-/**
- * Split the final markdown into sections and render strengths/weaknesses
- * as side-by-side cards, keeping the rest as normal markdown.
- */
 function parseMarkdownSafe(markdown) {
     if (typeof marked === 'undefined') return markdown;
     const html = marked.parse(markdown);
     return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(html) : html;
 }
 
-function layoutResults(md) {
-    // Split on h2 headers, keeping the header text
+function extractSections(md) {
     const parts = md.split(/^## /m);
-    const intro = parts[0]; // text before first h2
+    const intro = parts[0];
+    const sections = [];
 
-    const sections = {};
     for (let i = 1; i < parts.length; i++) {
         const newline = parts[i].indexOf('\n');
         const title = (newline === -1 ? parts[i] : parts[i].slice(0, newline)).trim();
         const body = newline === -1 ? '' : parts[i].slice(newline + 1);
-        sections[title] = body;
+        sections.push({ title, body });
     }
 
-    let html = parseMarkdownSafe(intro);
+    return { intro, sections };
+}
 
-    // Find the strengths and weaknesses sections (flexible matching)
-    const strengthKey = Object.keys(sections).find(k => /strength|pros/i.test(k));
-    const weaknessKey = Object.keys(sections).find(k => /weakness|cons/i.test(k));
+function ensureResultsLayout(container) {
+    if (container.querySelector('[data-job-fit-layout]')) return;
+    container.innerHTML = `
+        <div data-job-fit-layout>
+            <div data-job-fit-intro></div>
+            <div class="fit-cards-row mt-3">
+                <div class="fit-card fit-card-strengths">
+                    <div class="fit-card-header" data-job-fit-strength-title><i class="bi bi-hand-thumbs-up-fill me-2"></i>Strengths & Pros</div>
+                    <div class="fit-card-body" data-job-fit-strength-body></div>
+                </div>
+                <div class="fit-card fit-card-weaknesses">
+                    <div class="fit-card-header" data-job-fit-weakness-title><i class="bi bi-hand-thumbs-down-fill me-2"></i>Weaknesses & Cons</div>
+                    <div class="fit-card-body" data-job-fit-weakness-body></div>
+                </div>
+            </div>
+            <div class="mt-3" data-job-fit-other></div>
+        </div>
+    `;
+}
 
-    if (strengthKey && weaknessKey) {
-        html += '<div class="fit-cards-row">';
-        html += `<div class="fit-card fit-card-strengths">
-            <div class="fit-card-header"><i class="bi bi-hand-thumbs-up-fill me-2"></i>${strengthKey}</div>
-            <div class="fit-card-body">${parseMarkdownSafe(sections[strengthKey])}</div>
-        </div>`;
-        html += `<div class="fit-card fit-card-weaknesses">
-            <div class="fit-card-header"><i class="bi bi-hand-thumbs-down-fill me-2"></i>${weaknessKey}</div>
-            <div class="fit-card-body">${parseMarkdownSafe(sections[weaknessKey])}</div>
-        </div>`;
-        html += '</div>';
+function renderStreamingResults(container, md, showCursor = false) {
+    ensureResultsLayout(container);
+    const { intro, sections } = extractSections(md);
+    const strength = sections.find((section) => /strength|pros/i.test(section.title));
+    const weakness = sections.find((section) => /weakness|cons/i.test(section.title));
+    const otherSections = sections.filter((section) => section !== strength && section !== weakness);
+
+    const introEl = container.querySelector('[data-job-fit-intro]');
+    const strengthTitleEl = container.querySelector('[data-job-fit-strength-title]');
+    const strengthBodyEl = container.querySelector('[data-job-fit-strength-body]');
+    const weaknessTitleEl = container.querySelector('[data-job-fit-weakness-title]');
+    const weaknessBodyEl = container.querySelector('[data-job-fit-weakness-body]');
+    const otherEl = container.querySelector('[data-job-fit-other]');
+
+    introEl.innerHTML = parseMarkdownSafe(intro);
+    strengthTitleEl.innerHTML = `<i class="bi bi-hand-thumbs-up-fill me-2"></i>${strength?.title || 'Strengths & Pros'}`;
+    strengthBodyEl.innerHTML = parseMarkdownSafe(strength?.body || '');
+    weaknessTitleEl.innerHTML = `<i class="bi bi-hand-thumbs-down-fill me-2"></i>${weakness?.title || 'Weaknesses & Cons'}`;
+    weaknessBodyEl.innerHTML = parseMarkdownSafe(weakness?.body || '');
+    otherEl.innerHTML = otherSections.map((section) => parseMarkdownSafe(`## ${section.title}\n${section.body}`)).join('');
+
+    for (const el of container.querySelectorAll('.streaming-cursor')) {
+        el.remove();
     }
+    if (!showCursor) return;
 
-    // Render remaining sections (Overall Assessment, Verdict, etc.)
-    for (const [title, body] of Object.entries(sections)) {
-        if (title === strengthKey || title === weaknessKey) continue;
-        html += parseMarkdownSafe(`## ${title}\n${body}`);
+    let cursorTarget = introEl;
+    if (sections.length > 0) {
+        const lastSection = sections[sections.length - 1];
+        if (lastSection === strength) {
+            cursorTarget = strengthBodyEl;
+        } else if (lastSection === weakness) {
+            cursorTarget = weaknessBodyEl;
+        } else {
+            cursorTarget = otherEl;
+        }
     }
-
-    return html;
+    cursorTarget.insertAdjacentHTML('beforeend', '<span class="streaming-cursor"></span>');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -115,7 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show results section, clear previous
         resultsSection.classList.remove('d-none');
-        resultsContent.innerHTML = '<span class="streaming-cursor"></span>';
+        resultsContent.innerHTML = '';
+        renderStreamingResults(resultsContent, '', true);
         analyzeBtn.disabled = true;
         analyzeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Analyzing...';
 
@@ -151,8 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const chunk = JSON.parse(data);
                         if (chunk.type === 'token') {
                             fullText += chunk.content;
-                            resultsContent.innerHTML = parseMarkdownSafe(fullText) +
-                                '<span class="streaming-cursor"></span>';
+                            renderStreamingResults(resultsContent, fullText, true);
                         } else if (chunk.type === 'usage') {
                             updateUsageSummary(chunk);
                         }
@@ -163,8 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fullText += '\n\n**Error:** ' + err.message;
         }
 
-        // Final render: lay out strengths/weaknesses side-by-side
-        resultsContent.innerHTML = layoutResults(fullText);
+        renderStreamingResults(resultsContent, fullText, false);
         analyzeBtn.disabled = false;
         analyzeBtn.innerHTML = '<i class="bi bi-search me-1"></i> Analyze Fit';
 
