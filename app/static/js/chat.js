@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageSummary = document.getElementById("chatUsageSummary");
     const usageTokenText = document.getElementById("chatUsageTokenText");
     const usageProgressBar = document.getElementById("chatUsageProgressBar");
-    const usageProgressValue = document.getElementById("chatUsageProgressValue");
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
     const modelStorageKey = "cvbot.selectedModel";
@@ -239,7 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const formattedDailyCost =
             dailyTotal > 0 && dailyTotal < 0.01 ? `$${dailyTotal.toFixed(5)}` : `$${dailyTotal.toFixed(2)}`;
         if (usageCurrentCost) usageCurrentCost.textContent = formattedDailyCost;
-        if (usageProgressValue) usageProgressValue.textContent = formattedDailyCost;
+        //if (usageProgressValue) usageProgressValue.textContent = formattedDailyCost;
         if (usageMaxCost) usageMaxCost.textContent = `$${dailyLimit.toFixed(2)}`;
         if (usageProgressBar) {
             usageProgressBar.style.width = `${pct}%`;

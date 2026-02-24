@@ -88,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const usageSummary = document.getElementById('jobFitUsageSummary');
     const usageTokenText = document.getElementById('jobFitUsageTokenText');
     const usageProgressBar = document.getElementById('jobFitUsageProgressBar');
-    const usageProgressValue = document.getElementById('jobFitUsageProgressValue');
     const usageCurrentCost = document.getElementById('jobFitUsageCurrentCost');
     const usageMaxCost = document.getElementById('jobFitUsageMaxCost');
     const modelStorageKey = 'cvbot.selectedModel';
@@ -108,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dailyTotal > 0 && dailyTotal < 0.01 ? `$${dailyTotal.toFixed(5)}` : `$${dailyTotal.toFixed(2)}`;
         if (usageCurrentCost) usageCurrentCost.textContent = formattedDailyCost;
         if (usageProgressValue) usageProgressValue.textContent = formattedDailyCost;
-        if (usageMaxCost) usageMaxCost.textContent = `$${dailyLimit.toFixed(2)}`;
         if (usageProgressBar) {
             usageProgressBar.style.width = `${pct}%`;
             usageProgressBar.setAttribute('aria-valuenow', String(pct));
