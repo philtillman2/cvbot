@@ -121,6 +121,9 @@
         </div>
 
         <div class="chat-input-area">
+            <button class="scroll-bottom-btn" id="scrollBottomBtn" aria-label="Scroll to bottom">
+                <i class="bi bi-chevron-down me-1"></i> Scroll to bottom
+            </button>
             <div class="chat-input-wrapper">
                 <textarea class="form-control" id="chatInput" placeholder="Type your message here..."
                           rows="1" {% if not active_conversation %}disabled{% endif %}></textarea>

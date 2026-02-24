@@ -220,9 +220,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Scroll to bottom
-    function scrollToBottom() {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    function scrollToBottom(smooth = false) {
+        if (smooth) {
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+        } else {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }
+
+    // Scroll-to-bottom button
+    const scrollBottomBtn = document.getElementById("scrollBottomBtn");
+    function updateScrollBtnVisibility() {
+        if (!chatMessages || !scrollBottomBtn) return;
+        const threshold = 100;
+        const atBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < threshold;
+        scrollBottomBtn.classList.toggle("visible", !atBottom);
+    }
+    chatMessages?.addEventListener("scroll", updateScrollBtnVisibility);
+    scrollBottomBtn?.addEventListener("click", () => scrollToBottom(true));
+    updateScrollBtnVisibility();
 
     function updateUsageSummary(usage) {
         const dailyLimit = usage.daily_limit_usd || 0;

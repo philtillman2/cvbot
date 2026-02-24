@@ -325,8 +325,38 @@ body.work-experience-page {
     font-size: 0.85em;
 }
 
+/* ===== Scroll to Bottom Button ===== */
+.scroll-bottom-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    padding: 0.3rem 1rem;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 1rem;
+    background: var(--chat-input-bg);
+    color: var(--bs-body-color);
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.15s ease;
+}
+
+.scroll-bottom-btn:hover {
+    opacity: 1;
+}
+
+.scroll-bottom-btn.visible {
+    display: flex;
+}
+
 /* ===== Chat Input ===== */
 .chat-input-area {
+    position: relative;
     padding: 1rem 1.5rem 1.5rem;
 }
 
