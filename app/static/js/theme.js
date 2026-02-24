@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateToggleAppearance(currentTheme) {
         const nextTheme = currentTheme === "dark" ? "light" : "dark";
         if (icon) {
-            icon.classList.remove("bi-sun", "bi-moon-stars");
-            icon.classList.add(nextTheme === "light" ? "bi-sun" : "bi-moon-stars");
+            icon.classList.remove("bi-sun", "bi-moon");
+            icon.classList.add(nextTheme === "light" ? "bi-sun" : "bi-moon");
         }
     }
 
