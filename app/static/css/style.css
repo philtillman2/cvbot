@@ -15,6 +15,7 @@
     --topbar-border: #dee2e6;
     --accent: #0d6efd;
     --mobile-bottom-ui-offset: 0px;
+    --chat-input-area-height: 6rem;
 }
 
 [data-bs-theme="dark"] {
@@ -32,6 +33,7 @@
     --topbar-border: #2d2040;
     --accent: #a855f7;
     --mobile-bottom-ui-offset: 0px;
+    --chat-input-area-height: 6rem;
 }
 
 /* ===== Layout ===== */
@@ -480,7 +482,7 @@ body.work-experience-page {
     }
 
     .chat-messages {
-        padding-bottom: calc(6rem + max(env(safe-area-inset-bottom), var(--viewport-bottom-inset, 0px), var(--mobile-bottom-ui-offset)));
+        padding-bottom: calc(var(--chat-input-area-height, 6rem) + max(env(safe-area-inset-bottom), var(--viewport-bottom-inset, 0px), var(--mobile-bottom-ui-offset)));
     }
 
     .sidebar {

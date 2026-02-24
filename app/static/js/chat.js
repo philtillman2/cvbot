@@ -78,7 +78,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function syncBottomOffsets(resetAdaptive = false) {
         if (resetAdaptive) adaptiveBottomOffset = 0;
         updateViewportBottomInset();
-        window.requestAnimationFrame(updateAdaptiveMobileBottomOffset);
+        window.requestAnimationFrame(() => {
+            updateAdaptiveMobileBottomOffset();
+            updateChatInputAreaHeight();
+        });
+    }
+    function updateChatInputAreaHeight() {
+        if (!chatInputArea) return;
+        const height = Math.ceil(chatInputArea.getBoundingClientRect().height);
+        document.documentElement.style.setProperty("--chat-input-area-height", `${height}px`);
     }
     syncBottomOffsets(true);
     window.addEventListener("resize", () => syncBottomOffsets(true));
@@ -91,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.addEventListener("input", () => {
         chatInput.style.height = "auto";
         chatInput.style.height = Math.min(chatInput.scrollHeight, 150) + "px";
+        syncBottomOffsets(false);
     });
 
     const savedModel = localStorage.getItem(modelStorageKey);
