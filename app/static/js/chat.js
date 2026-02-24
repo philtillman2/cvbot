@@ -26,10 +26,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return typeof DOMPurify !== "undefined" ? DOMPurify.sanitize(html) : html;
     }
 
-    // Extract conversation ID from URL
-    const pathMatch = window.location.pathname.match(/^\/chat\/(\d+)$/);
+    // Extract conversation ID from URL/sidebar so send works with optional trailing slash.
+    const pathMatch = window.location.pathname.match(/\/chat\/(\d+)\/?$/);
     if (pathMatch) {
         conversationId = parseInt(pathMatch[1]);
+    } else {
+        const activeConversation = document.querySelector(".conversation-item.active");
+        const activeConversationId = activeConversation?.dataset?.id;
+        if (activeConversationId) {
+            conversationId = parseInt(activeConversationId);
+        }
     }
 
     function setTooltip(el, text) {
@@ -118,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    sendBtn.addEventListener("click", sendMessage);
+    sendBtn.addEventListener("click", () => sendMessage());
 
     // New Interview
     newChatBtn.addEventListener("click", async () => {
