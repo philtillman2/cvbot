@@ -47,9 +47,6 @@
         </nav>
 
         <div class="sidebar-footer">
-            <a href="/work-experience" class="btn btn-sm btn-outline-secondary w-100 mb-2">
-                <i class="bi bi-briefcase me-1"></i> Work Experience
-            </a>
             <a href="/job-fit" class="btn btn-sm btn-outline-secondary w-100 mb-2">
                 <i class="bi bi-clipboard-check me-1"></i> Job Fit Analysis
             </a>
@@ -73,10 +70,15 @@
                 {% endif %}
             </span>
             <div class="ms-auto d-flex align-items-center">
+                <a href="/work-experience" class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Work Experience" aria-label="Work experience">
+                    <i class="bi bi-briefcase"></i>
+                </a>
                 <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary topbar-settings-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open settings">
-                        <i class="bi bi-sliders"></i>
-                    </button>
+                    <span class="d-inline-block" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Settings">
+                        <button class="btn btn-sm btn-outline-secondary topbar-settings-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Open settings">
+                            <i class="bi bi-sliders"></i>
+                        </button>
+                    </span>
                     <div class="dropdown-menu dropdown-menu-end p-3 settings-menu">
                         <button class="btn btn-sm btn-outline-secondary mb-3" id="themeToggle">
                             <i class="bi bi-moon me-1" id="themeToggleIcon"></i>
