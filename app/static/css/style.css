@@ -196,6 +196,16 @@ body.work-experience-page {
     min-width: 260px;
 }
 
+.settings-menu {
+    min-width: 300px;
+    background: var(--topbar-bg);
+    border-color: var(--topbar-border);
+}
+
+.settings-menu .usage-summary-meta {
+    justify-content: space-between;
+}
+
 .usage-summary-meta {
     display: flex;
     align-items: center;
