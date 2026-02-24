@@ -14,6 +14,7 @@
     --topbar-bg: #ffffff;
     --topbar-border: #dee2e6;
     --accent: #0d6efd;
+    --mobile-bottom-ui-offset: 0px;
 }
 
 [data-bs-theme="dark"] {
@@ -30,6 +31,7 @@
     --topbar-bg: #1a1025;
     --topbar-border: #2d2040;
     --accent: #a855f7;
+    --mobile-bottom-ui-offset: 0px;
 }
 
 /* ===== Layout ===== */
@@ -60,6 +62,8 @@ body.work-experience-page {
 .app-layout {
     display: flex;
     height: 100vh;
+    height: 100svh;
+    height: 100dvh;
 }
 
 /* ===== Sidebar ===== */
@@ -357,7 +361,8 @@ body.work-experience-page {
 /* ===== Chat Input ===== */
 .chat-input-area {
     position: relative;
-    padding: 1rem 1.5rem 1.5rem;
+    padding: 1rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+    padding: 1rem 1.5rem calc(1.5rem + max(env(safe-area-inset-bottom), var(--viewport-bottom-inset, 0px), var(--mobile-bottom-ui-offset)));
 }
 
 .chat-input-wrapper {
@@ -458,6 +463,26 @@ body.work-experience-page {
 
 /* ===== Responsive ===== */
 @media (max-width: 767.98px) {
+    :root,
+    [data-bs-theme="light"],
+    [data-bs-theme="dark"] {
+        --mobile-bottom-ui-offset: 0px;
+    }
+
+    .chat-input-area {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: max(env(safe-area-inset-bottom), var(--viewport-bottom-inset, 0px), var(--mobile-bottom-ui-offset));
+        z-index: 20;
+        background: var(--chat-bg);
+        padding: 1rem 1.5rem 1.5rem;
+    }
+
+    .chat-messages {
+        padding-bottom: calc(6rem + max(env(safe-area-inset-bottom), var(--viewport-bottom-inset, 0px), var(--mobile-bottom-ui-offset)));
+    }
+
     .sidebar {
         position: fixed;
         top: 0;

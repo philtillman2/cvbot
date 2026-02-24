@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageProgressBar = document.getElementById("chatUsageProgressBar");
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
+    const chatInputArea = document.querySelector(".chat-input-area");
     const modelStorageKey = "cvbot.selectedModel";
 
     let conversationId = null;
@@ -41,6 +42,50 @@ document.addEventListener("DOMContentLoaded", () => {
         bootstrap.Tooltip.getInstance(el)?.dispose();
         new bootstrap.Tooltip(el);
     }
+
+    function updateViewportBottomInset() {
+        if (!window.visualViewport) {
+            document.documentElement.style.setProperty("--viewport-bottom-inset", "0px");
+            return;
+        }
+        const inset = Math.max(
+            0,
+            window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop
+        );
+        document.documentElement.style.setProperty("--viewport-bottom-inset", `${Math.round(inset)}px`);
+    }
+    let adaptiveBottomOffset = 0;
+    function updateAdaptiveMobileBottomOffset() {
+        if (!chatInputArea || !window.matchMedia("(max-width: 767.98px)").matches) {
+            adaptiveBottomOffset = 0;
+            document.documentElement.style.setProperty("--mobile-bottom-ui-offset", "0px");
+            return;
+        }
+        const viewportInset =
+            parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--viewport-bottom-inset")) || 0;
+        if (viewportInset > 0) {
+            adaptiveBottomOffset = 0;
+            document.documentElement.style.setProperty("--mobile-bottom-ui-offset", "0px");
+            return;
+        }
+        const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+        const overlap = Math.ceil(chatInputArea.getBoundingClientRect().bottom - viewportHeight);
+        if (overlap > 0) {
+            adaptiveBottomOffset = Math.min(96, Math.max(adaptiveBottomOffset, overlap + 8));
+        }
+        document.documentElement.style.setProperty("--mobile-bottom-ui-offset", `${adaptiveBottomOffset}px`);
+    }
+    function syncBottomOffsets(resetAdaptive = false) {
+        if (resetAdaptive) adaptiveBottomOffset = 0;
+        updateViewportBottomInset();
+        window.requestAnimationFrame(updateAdaptiveMobileBottomOffset);
+    }
+    syncBottomOffsets(true);
+    window.addEventListener("resize", () => syncBottomOffsets(true));
+    window.visualViewport?.addEventListener("resize", () => syncBottomOffsets(true));
+    window.visualViewport?.addEventListener("scroll", () => syncBottomOffsets(false));
+    chatInput?.addEventListener("focus", () => syncBottomOffsets(false));
+    setTimeout(() => syncBottomOffsets(false), 250);
 
     // Auto-resize textarea
     chatInput.addEventListener("input", () => {
