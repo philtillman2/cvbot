@@ -1,0 +1,48 @@
+{% extends "base.html.j2" %}
+{% block title %}CVbot — Contact{% endblock %}
+
+{% block body %}
+<div class="container-fluid py-4" style="max-width: 800px;">
+    <div class="d-flex align-items-center mb-4">
+        <a href="/chat" class="btn btn-sm btn-outline-secondary me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Back" aria-label="Back">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h3 class="mb-0"><i class="bi bi-envelope me-2"></i>Contact</h3>
+    </div>
+
+    {% if success %}
+    <div class="alert alert-success" role="alert">
+        Thanks, your message was sent.
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="/contact">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ form.name if form else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ form.email if form else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" value="{{ form.subject if form else '' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="7" required>{{ form.message if form else '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send message</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

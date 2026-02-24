@@ -4,6 +4,13 @@ db_path: cvbot.db
 data_dir: data/candidates
 openrouter_url: "https://openrouter.ai/api/v1/chat/completions"
 models_url: "https://openrouter.ai/api/v1/models"
+smtp:
+  host: smtp-relay.brevo.com
+  port: 587
+  use_tls: true
+contact:
+  email_from: phil.tillman@gmail.com
+  email_to: phil.tillman@gmail.com
 models:
   openai/gpt-4o-mini: GPT-4o Mini
   openai/gpt-4o: GPT-4o

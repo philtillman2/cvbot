@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from app.config import settings
 from app.database import init_db
 from app.services.candidate_loader import load_candidates
-from app.routers import chat, conversations, candidates, costs, job_fit, work_experience
+from app.routers import chat, conversations, candidates, contact, costs, job_fit, work_experience
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -29,6 +29,7 @@ templates = Jinja2Templates(directory=BASE_DIR / "templates")
 app.include_router(chat.router)
 app.include_router(conversations.router)
 app.include_router(candidates.router)
+app.include_router(contact.router)
 app.include_router(costs.router)
 app.include_router(job_fit.router)
 app.include_router(work_experience.router)

@@ -26,6 +26,14 @@ uv sync
 
 cp .env.example secrets/.env
 # Add your values for secrets like OPENROUTER_API_KEY their and the ENV value.
+# For contact emails also configure:
+# SMTP_HOST=...
+# SMTP_PORT=587
+# SMTP_USERNAME=...
+# SMTP_PASSWORD=...
+# SMTP_USE_TLS=true
+# CONTACT_EMAIL_FROM=...
+# CONTACT_EMAIL_TO=...
 
 # Then adjust config/config-dev.yaml if needed
 
@@ -63,6 +71,8 @@ Paste a job description and get a structured fit assessment with overall verdict
 Track LLM usage with daily cumulative line chart and monthly bar chart
 
 ![cost_dashboard](images/cost_dashboard.png)
+### Contact form
+Visitors can send you a message through the app, and submissions are forwarded to your configured email inbox.
 ### Multiple models
 Choose from GPT-4o, Claude, Gemini via OpenRouter
 ### View work experience
