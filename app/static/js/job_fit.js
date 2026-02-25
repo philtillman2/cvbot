@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usageTokenText = document.getElementById('jobFitUsageTokenText');
     const usageProgressBar = document.getElementById('jobFitUsageProgressBar');
     const usageCurrentCost = document.getElementById('jobFitUsageCurrentCost');
-    const usageMaxCost = document.getElementById('jobFitUsageMaxCost');
+    const usageProgressValue = document.getElementById('jobFitUsageCurrentCost');
     const modelStorageKey = 'cvbot.selectedModel';
 
     function updateUsageSummary(usage) {
@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!resp.ok) return;
             const usage = await resp.json();
             updateUsageSummary(usage);
-        } catch (_) {}
+        } catch (e) {
+            console.log.error(e);
+        }
     }
 
     initializeUsageSummary();
