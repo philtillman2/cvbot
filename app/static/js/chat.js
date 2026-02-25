@@ -328,7 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!resp.ok) return;
             const usage = await resp.json();
             updateUsageSummary(usage);
-        } catch (_) {}
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     // Render markdown in existing messages
@@ -396,7 +398,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                     const payload = await resp.json();
                     if (payload?.error) errorMessage = payload.error;
-                } catch (e) {}
+                } catch (e) {
+                    console.error(e);
+                }
                 throw new Error(errorMessage);
             }
 
@@ -436,6 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             updateUsageSummary(data);
                         }
                     } catch (e) {
+                        console.error(e);
                         // skip malformed chunks
                     }
                 }
@@ -449,6 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             updateUsageSummary(data);
                         }
                     } catch (e) {
+                        console.error(e);
                         // skip malformed chunks
                     }
                 }
@@ -463,6 +469,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 contentEl.innerHTML = parseMarkdownSafe(fullText);
             }
         } catch (err) {
+            console.error(err);
             if (isEdit && userDiv) {
                 const userContent = userDiv.querySelector(".message-content");
                 if (userContent) userContent.textContent = originalUserText;

@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const usage = await resp.json();
             updateUsageSummary(usage);
         } catch (e) {
-            console.log.error(e);
+            console.error(e);
         }
     }
 
@@ -186,11 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (chunk.type === 'usage') {
                             updateUsageSummary(chunk);
                         }
-                    } catch (_) {}
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             }
         } catch (err) {
             fullText += '\n\n**Error:** ' + err.message;
+            console.error(err);
         }
 
         renderStreamingResults(resultsContent, fullText, false);
