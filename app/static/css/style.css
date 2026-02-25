@@ -6,14 +6,16 @@
     --sidebar-text: #212529;
     --chat-bg: #ffffff;
     --chat-input-bg: #f8f9fa;
-    --message-user-bg: #0d6efd;
+    --message-user-bg: #fda290;
     --message-user-text: #ffffff;
     --message-assistant-bg: #f0f0f0;
     --message-assistant-text: #212529;
     --welcome-text: #6c757d;
     --topbar-bg: #ffffff;
     --topbar-border: #dee2e6;
-    --accent: #0d6efd;
+    --accent: #013178;
+    --accent-middle: #0b50b8;
+    --accent-subtle: #46628d;
     --mobile-bottom-ui-offset: 0px;
     --chat-input-area-height: 6rem;
 }
@@ -24,7 +26,7 @@
     --sidebar-text: #e0d8e8;
     --chat-bg: #120e1a;
     --chat-input-bg: #1e1529;
-    --message-user-bg: #6c3fa0;
+    --message-user-bg: #492f66;
     --message-user-text: #ffffff;
     --message-assistant-bg: #1e1529;
     --message-assistant-text: #e0d8e8;
@@ -32,6 +34,8 @@
     --topbar-bg: #1a1025;
     --topbar-border: #2d2040;
     --accent: #a855f7;
+    --accent-middle: #733ca6;
+    --accent-subtle: #39254e;
     --mobile-bottom-ui-offset: 0px;
     --chat-input-area-height: 6rem;
 }
@@ -56,6 +60,12 @@ body.costs-page {
 }
 
 body.work-experience-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--chat-bg);
+}
+
+body.contact-page {
     overflow-y: auto;
     overflow-x: hidden;
     background: var(--chat-bg);
@@ -118,12 +128,12 @@ body.work-experience-page {
 }
 
 .conversation-item:hover {
-    background: var(--sidebar-border);
-    color: var(--sidebar-text);
+    background: var(--accent-subtle);
+    color: #fff;
 }
 
 .conversation-item.active {
-    background: var(--accent);
+    background: var(--accent-subtle);
     color: #fff;
 }
 
@@ -442,14 +452,14 @@ body.work-experience-page {
 }
 
 .btn-primary {
-    --bs-btn-bg: var(--accent);
-    --bs-btn-border-color: var(--accent);
-    --bs-btn-hover-bg: color-mix(in srgb, var(--accent) 85%, black);
-    --bs-btn-hover-border-color: color-mix(in srgb, var(--accent) 85%, black);
-    --bs-btn-active-bg: color-mix(in srgb, var(--accent) 75%, black);
-    --bs-btn-active-border-color: color-mix(in srgb, var(--accent) 75%, black);
-    --bs-btn-disabled-bg: var(--accent);
-    --bs-btn-disabled-border-color: var(--accent);
+    --bs-btn-bg: var(--accent-subtle);
+    --bs-btn-border-color: var(--accent-subtle);
+    --bs-btn-hover-bg: color-mix(in srgb, var(--accent-middle) 85%, black);
+    --bs-btn-hover-border-color: color-mix(in srgb, var(--accent-middle) 85%, black);
+    --bs-btn-active-bg: color-mix(in srgb, var(--accent-middle) 75%, black);
+    --bs-btn-active-border-color: color-mix(in srgb, var(--accent-middle) 75%, black);
+    --bs-btn-disabled-bg: var(--accent-subtle);
+    --bs-btn-disabled-border-color: var(--accent-subtle);
 }
 
 .send-btn {
