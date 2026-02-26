@@ -31,7 +31,7 @@ async def work_experience_page(request: Request, candidate_id: str | None = None
     if profile:
         display_name = next((c["display_name"] for c in candidates if c["id"] == candidate_id), "")
 
-    return templates.TemplateResponse("work_experience.html", {
+    return templates.TemplateResponse("work_experience.html.j2", {
         "request": request,
         "candidates": candidates,
         "candidate_id": candidate_id,
