@@ -6,8 +6,10 @@ _db: aiosqlite.Connection | None = None
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS candidates (
     id TEXT PRIMARY KEY,
-    display_name TEXT NOT NULL,
-    json_path TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    middle_name TEXT,
+    work_experience JSONB NOT NULL CHECK(json_valid(work_experience)),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -39,6 +41,21 @@ CREATE TABLE IF NOT EXISTS llm_requests (
 """
 
 
+async def _ensure_candidates_schema():
+    db = await get_db()
+    rows = await db.execute_fetchall("PRAGMA table_info(candidates)")
+    columns = {row["name"] for row in rows}
+    if "first_name" not in columns:
+        await db.execute("ALTER TABLE candidates ADD COLUMN first_name TEXT")
+    if "last_name" not in columns:
+        await db.execute("ALTER TABLE candidates ADD COLUMN last_name TEXT")
+    if "middle_name" not in columns:
+        await db.execute("ALTER TABLE candidates ADD COLUMN middle_name TEXT")
+    if "work_experience" not in columns:
+        await db.execute("ALTER TABLE candidates ADD COLUMN work_experience JSONB")
+    await db.commit()
+
+
 async def init_db():
     global _db
     _db = await aiosqlite.connect(settings.db_path)
@@ -46,6 +63,7 @@ async def init_db():
     await _db.execute("PRAGMA journal_mode=WAL")
     await _db.execute("PRAGMA foreign_keys=ON")
     await _db.executescript(SCHEMA)
+    await _ensure_candidates_schema()
     await _db.commit()
 
 

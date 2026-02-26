@@ -24,7 +24,8 @@ async def create_conversation(body: ConversationCreate):
 async def list_conversations():
     db = await get_db()
     rows = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
     return [dict(r) for r in rows]

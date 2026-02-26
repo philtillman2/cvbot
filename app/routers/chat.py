@@ -34,10 +34,15 @@ async def chat_page(request: Request):
         if existing:
             return RedirectResponse(url=f"/chat/{last_chat_id}")
     conversations = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
-    candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
+    candidates = await db.execute_fetchall(
+        "SELECT id, first_name, middle_name, last_name, "
+        "TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) AS display_name "
+        "FROM candidates ORDER BY display_name"
+    )
     return templates.TemplateResponse("chat.html.j2", {
         "request": request,
         "conversations": conversations,
@@ -53,12 +58,18 @@ async def chat_page(request: Request):
 async def chat_page_with_conversation(request: Request, conversation_id: int):
     db = await get_db()
     conversations = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
-    candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
+    candidates = await db.execute_fetchall(
+        "SELECT id, first_name, middle_name, last_name, "
+        "TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) AS display_name "
+        "FROM candidates ORDER BY display_name"
+    )
     active = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id WHERE c.id = ?",
         (conversation_id,),
     )
@@ -153,7 +164,8 @@ async def chat_stream(conversation_id: int, body: ChatRequest):
 
     # Get conversation and candidate info
     rows = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id WHERE c.id = ?",
         (conversation_id,),
     )
@@ -204,7 +216,8 @@ async def edit_chat_stream(conversation_id: int, message_id: int, body: ChatRequ
         )
 
     rows = await db.execute_fetchall(
-        "SELECT c.*, ca.display_name as candidate_name FROM conversations c "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || COALESCE(ca.middle_name || ' ', '') || ca.last_name) "
+        "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id WHERE c.id = ?",
         (conversation_id,),
     )

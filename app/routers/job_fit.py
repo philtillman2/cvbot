@@ -43,7 +43,11 @@ def _build_job_fit_prompt(candidate_id: str, display_name: str, job_description:
 @router.get("/job-fit")
 async def job_fit_page(request: Request):
     db = await get_db()
-    candidates = await db.execute_fetchall("SELECT * FROM candidates ORDER BY display_name")
+    candidates = await db.execute_fetchall(
+        "SELECT id, first_name, middle_name, last_name, "
+        "TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) AS display_name "
+        "FROM candidates ORDER BY display_name"
+    )
     return templates.TemplateResponse("job_fit.html.j2", {
         "request": request,
         "candidates": candidates,
@@ -56,7 +60,9 @@ async def job_fit_page(request: Request):
 async def job_fit_stream(body: JobFitRequest):
     db = await get_db()
     rows = await db.execute_fetchall(
-        "SELECT id, display_name FROM candidates WHERE id = ?", (body.candidate_id,)
+        "SELECT id, TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) "
+        "AS display_name FROM candidates WHERE id = ?",
+        (body.candidate_id,),
     )
     if not rows:
         return {"error": "Candidate not found"}

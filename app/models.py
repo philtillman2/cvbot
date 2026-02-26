@@ -77,11 +77,17 @@ class PageRange(BaseModel):
     end: Optional[int] = None
 
 
+class PublicationDate(BaseModel):
+    year: int
+    month: Optional[int] = None
+    day: Optional[int] = None
+
+
 class Publication(BaseModel):
     title: str = ""
     abstract: str = ""
     authors: list[Author] = []
-    date: Optional[dict] = None
+    date: Optional[PublicationDate] = None
     journal: str = ""
     publication: str = ""
     volume: Optional[int] = None
@@ -94,12 +100,16 @@ class Publication(BaseModel):
     links: list[str] = []
 
 
-class CandidateProfile(BaseModel):
+class WorkExperience(BaseModel):
     summary: str = ""
     skills: str = ""
     work: list[WorkEntry] = []
     education: list[Education] = []
     publications: list[Publication] = []
+
+
+class CandidateProfile(WorkExperience):
+    pass
 
 
 # --- API / DB models ---

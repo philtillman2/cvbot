@@ -29,7 +29,10 @@ def _format_date(d) -> str:
 @router.get("/work-experience")
 async def work_experience_page(request: Request, candidate_id: str | None = None):
     db = await get_db()
-    candidates = await db.execute_fetchall("SELECT id, display_name FROM candidates ORDER BY display_name")
+    candidates = await db.execute_fetchall(
+        "SELECT id, TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) "
+        "AS display_name FROM candidates ORDER BY display_name"
+    )
     candidates = [dict(c) for c in candidates]
 
     if not candidate_id and candidates:
@@ -92,8 +95,8 @@ async def work_experience_page(request: Request, candidate_id: str | None = None
         for pub in profile.publications:
             date_str = ""
             if pub.date:
-                yr = pub.date.get("year")
-                mo = pub.date.get("month")
+                yr = pub.date.year
+                mo = pub.date.month
                 if yr and mo:
                     date_str = f"{MONTH_NAMES[mo]} {yr}"
                 elif yr:
