@@ -103,6 +103,8 @@ def test_mobile_messages_padding_tracks_composer_height(browser, base_url):
                 el.dispatchEvent(new Event("input", { bubbles: true }));
             }""",
         )
+        # Wait for the requestAnimationFrame in syncBottomOffsets to fire
+        page.evaluate("() => new Promise(r => requestAnimationFrame(r))")
         expanded = _chat_messages_padding_bottom(page)
         assert expanded >= baseline + 20, (
             f"Expected chat message bottom padding to grow with composer height (baseline={baseline}, expanded={expanded})"
