@@ -10,7 +10,13 @@
         </a>
         <h3 class="mb-0"><i class="bi bi-briefcase me-2"></i>Work Experience</h3>
         <div class="ms-auto d-flex align-items-center gap-2">
-            <span class="badge bg-success" id="savedBadge" style="display:none;">Saved</span>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="downloadProfileBtn">
+                <i class="bi bi-download me-1"></i>Download JSON
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="uploadProfileBtn">
+                <i class="bi bi-upload me-1"></i>Upload JSON
+            </button>
+            <input type="file" id="uploadProfileInput" accept="application/json,.json" class="d-none">
         </div>
     </div>
 
@@ -41,6 +47,15 @@
     <!-- Publications -->
     <h3 class="mt-5 mb-3"><i class="bi bi-journal-text me-2"></i>Publications</h3>
     <div id="publicationsSection"></div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="savedToast" class="toast fade align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body"><i class="bi bi-check-lg me-1"></i>Saved</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

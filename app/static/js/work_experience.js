@@ -197,8 +197,11 @@
     }
 
     function showSavedBadge() {
-        const badge = document.getElementById("savedBadge");
-        if (badge) { badge.style.display = ""; setTimeout(() => { badge.style.display = "none"; }, 2000); }
+        const toastEl = document.getElementById("savedToast");
+        if (toastEl) {
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 2000 });
+            toast.show();
+        }
     }
 
     /* ── per-item UI widgets ──────────────────────────────── */
@@ -601,8 +604,76 @@
         } catch (e) { alert("Save failed: " + e.message); }
     }
 
+    async function downloadProfile() {
+        const resp = await fetch(`/api/candidates/${candidateId}/work-experience/download`);
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.detail || resp.statusText);
+        }
+        const blob = await resp.blob();
+        const disposition = resp.headers.get("content-disposition") || "";
+        const match = disposition.match(/filename="([^"]+)"/);
+        const filename = match ? match[1] : `${candidateId}_work_experience.json`;
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = href;
+        link.download = filename;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(href);
+    }
+
+    async function uploadProfile(file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const resp = await fetch(`/api/candidates/${candidateId}/work-experience/upload`, {
+            method: "POST",
+            body: formData,
+        });
+        const body = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(body.detail || resp.statusText);
+        data = body.profile;
+        editingKeys.clear();
+        Object.keys(snapshots).forEach(k => delete snapshots[k]);
+        render();
+        showSavedBadge();
+    }
+
     /* ── init ─────────────────────────────────────────────── */
-    document.addEventListener("DOMContentLoaded", render);
+    document.addEventListener("DOMContentLoaded", () => {
+        const downloadBtn = document.getElementById("downloadProfileBtn");
+        const uploadBtn = document.getElementById("uploadProfileBtn");
+        const uploadInput = document.getElementById("uploadProfileInput");
+        if (downloadBtn) {
+            downloadBtn.addEventListener("click", async () => {
+                try {
+                    await downloadProfile();
+                } catch (e) {
+                    alert("Download failed: " + e.message);
+                }
+            });
+        }
+        if (uploadBtn && uploadInput) {
+            uploadBtn.addEventListener("click", () => uploadInput.click());
+            uploadInput.addEventListener("change", async () => {
+                const [file] = uploadInput.files || [];
+                if (!file) return;
+                if (!confirm("Uploading JSON will overwrite the current work experience data in the database. Continue?")) {
+                    uploadInput.value = "";
+                    return;
+                }
+                try {
+                    await uploadProfile(file);
+                } catch (e) {
+                    alert("Upload failed: " + e.message);
+                } finally {
+                    uploadInput.value = "";
+                }
+            });
+        }
+        render();
+    });
 
     document.addEventListener("keydown", e => {
         if ((e.ctrlKey || e.metaKey) && e.key === "s") {

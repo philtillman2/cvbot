@@ -1,8 +1,9 @@
 import json
 
-from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse, Response
 from pathlib import Path
+from pydantic import ValidationError
 from starlette.templating import Jinja2Templates
 
 from app.database import get_db
@@ -47,3 +48,37 @@ async def update_work_experience(candidate_id: str, body: WorkExperience):
         raise HTTPException(status_code=404, detail="Candidate not found")
     await save_profile(candidate_id, body)
     return JSONResponse({"ok": True})
+
+
+@router.get("/api/candidates/{candidate_id}/work-experience/download")
+async def download_work_experience(candidate_id: str):
+    profile = get_profile(candidate_id)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    return Response(
+        content=profile.model_dump_json(indent=2),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="{candidate_id}_work_experience.json"'
+        },
+    )
+
+
+@router.post("/api/candidates/{candidate_id}/work-experience/upload")
+async def upload_work_experience(candidate_id: str, file: UploadFile = File(...)):
+    existing = get_profile(candidate_id)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    raw = await file.read()
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except UnicodeDecodeError:
+        raise HTTPException(status_code=400, detail="Uploaded file must be UTF-8 JSON")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON file")
+    try:
+        profile = WorkExperience.model_validate(payload)
+    except ValidationError:
+        raise HTTPException(status_code=422, detail="Uploaded JSON does not match WorkExperience schema")
+    await save_profile(candidate_id, profile)
+    return JSONResponse({"ok": True, "profile": profile.model_dump()})

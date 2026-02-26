@@ -53,6 +53,77 @@ def test_get_work_experience_page_contains_profile_json(
     _run_coro_in_thread(_run())
 
 
+def test_download_work_experience_json(tmp_path: Path, test_candidate_source_data):
+    """GET download endpoint should return candidate work_experience JSON attachment."""
+
+    async def _run():
+        async with UnitTestEnv(tmp_path, test_candidate_source_data):
+            import httpx
+            from httpx import ASGITransport
+            from app.main import app
+
+            async with httpx.AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                resp = await client.get(
+                    f"/api/candidates/{TEST_CANDIDATE_ID}/work-experience/download"
+                )
+                assert resp.status_code == 200
+                assert resp.headers["content-type"].startswith("application/json")
+                assert (
+                    "attachment;"
+                    in resp.headers.get("content-disposition", "").lower()
+                )
+                body = resp.json()
+                assert body["summary"] == test_candidate_source_data["summary"]
+                assert "work" in body
+
+    _run_coro_in_thread(_run())
+
+
+def test_upload_work_experience_json_overwrites_db(
+    tmp_path: Path, test_candidate_source_data
+):
+    """POST upload endpoint should validate and overwrite candidate work_experience."""
+
+    async def _run():
+        async with UnitTestEnv(tmp_path, test_candidate_source_data):
+            import httpx
+            from httpx import ASGITransport
+            from app.main import app
+
+            updated = get_profile(TEST_CANDIDATE_ID).model_dump()
+            updated["summary"] = "Uploaded summary overwrite"
+
+            async with httpx.AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                resp = await client.post(
+                    f"/api/candidates/{TEST_CANDIDATE_ID}/work-experience/upload",
+                    files={
+                        "file": (
+                            "work_experience.json",
+                            json.dumps(updated),
+                            "application/json",
+                        )
+                    },
+                )
+                assert resp.status_code == 200
+                assert resp.json()["ok"] is True
+
+            assert get_profile(TEST_CANDIDATE_ID).summary == "Uploaded summary overwrite"
+
+            db = await database.get_db()
+            rows = await db.execute_fetchall(
+                "SELECT work_experience FROM candidates WHERE id = ?",
+                (TEST_CANDIDATE_ID,),
+            )
+            db_data = json.loads(rows[0]["work_experience"])
+            assert db_data["summary"] == "Uploaded summary overwrite"
+
+    _run_coro_in_thread(_run())
+
+
 def test_put_saves_and_persists_edits(tmp_path: Path, test_candidate_source_data):
     """PUT should update in-memory cache and DB."""
 

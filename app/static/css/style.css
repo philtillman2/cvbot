@@ -704,3 +704,8 @@ textarea.we-edit-field {
 @keyframes blink {
     50% { opacity: 0; }
 }
+
+/* ===== Toast overrides ===== */
+#savedToast {
+    opacity: 0.85;
+}
