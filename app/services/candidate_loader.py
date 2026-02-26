@@ -77,3 +77,16 @@ def get_profile(candidate_id: str) -> WorkExperience | None:
 
 def get_profile_json(candidate_id: str) -> str | None:
     return _profile_json.get(candidate_id)
+
+
+async def save_profile(candidate_id: str, profile: WorkExperience) -> None:
+    """Persist a validated WorkExperience to DB and update in-memory cache."""
+    work_experience_json = profile.model_dump_json()
+    db = await get_db()
+    await db.execute(
+        "UPDATE candidates SET work_experience = ? WHERE id = ?",
+        (work_experience_json, candidate_id),
+    )
+    await db.commit()
+    _profiles[candidate_id] = profile
+    _profile_json[candidate_id] = work_experience_json

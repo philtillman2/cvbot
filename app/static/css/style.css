@@ -636,6 +636,64 @@ body.contact-page {
     border-left: 2px solid var(--sidebar-border);
 }
 
+/* ===== Work Experience Editor ===== */
+.we-pencil-btn {
+    opacity: 0.3;
+    transition: opacity 0.15s;
+    vertical-align: middle;
+}
+.we-pencil-btn:hover {
+    opacity: 1;
+}
+.we-entry:hover .we-pencil-btn {
+    opacity: 0.6;
+}
+.we-editing {
+    border-left: 3px solid var(--accent) !important;
+}
+.we-edit-actions {
+    padding-top: 0.5rem;
+}
+.we-edit-field {
+    font-size: 0.85rem;
+    padding: 0.15rem 0.4rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.15s, background 0.15s;
+}
+.we-edit-field:hover {
+    border-color: var(--sidebar-border);
+}
+.we-edit-field:focus {
+    background: var(--chat-input-bg);
+    border-color: var(--accent);
+    box-shadow: none;
+}
+textarea.we-edit-field {
+    min-height: 2.5rem;
+}
+.we-date-input {
+    width: 5rem;
+    text-align: center;
+}
+.we-date-input.we-date-month {
+    width: 3.5rem;
+}
+.we-remove-btn {
+    padding: 0.1rem 0.35rem;
+    font-size: 0.7rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.we-add-btn {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+}
+.we-save-btn {
+    min-width: 5rem;
+}
+
 /* ===== Streaming cursor ===== */
 .streaming-cursor::after {
     content: "▊";
