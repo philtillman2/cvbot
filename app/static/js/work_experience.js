@@ -205,11 +205,28 @@
     }
 
     /* ── per-item UI widgets ──────────────────────────────── */
+    function initTooltips(root = document) {
+        if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) return;
+        root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+            if (!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el);
+        });
+    }
+
     function pencilBtn(key) {
         return h("button", {
             className: "btn btn-sm btn-link text-body-secondary p-0 ms-2 we-pencil-btn",
-            onClick: e => { e.preventDefault(); e.stopPropagation(); startEdit(key); },
-            title: "Edit"
+            onClick: e => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
+                    bootstrap.Tooltip.getInstance(e.currentTarget)?.dispose();
+                }
+                startEdit(key);
+            },
+            "data-bs-toggle": "tooltip",
+            "data-bs-placement": "bottom",
+            "data-bs-title": "Edit",
+            "aria-label": "Edit"
         }, h("i", { className: "bi bi-pencil", style: "font-size:0.75rem" }));
     }
 
@@ -590,6 +607,7 @@
         renderWork();
         renderEducation();
         renderPublications();
+        initTooltips();
     }
 
     /* ── save all (Ctrl+S) ───────────────────────────────── */

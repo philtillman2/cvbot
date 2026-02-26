@@ -18,6 +18,11 @@
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
                 if (!bootstrap.Tooltip.getInstance(el)) new bootstrap.Tooltip(el);
             });
+            document.addEventListener("click", () => {
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+                    bootstrap.Tooltip.getInstance(el)?.hide();
+                });
+            }, true);
         });
     </script>
     {% block scripts %}{% endblock %}
