@@ -219,9 +219,6 @@
             onClick: e => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (typeof bootstrap !== "undefined" && bootstrap.Tooltip) {
-                    bootstrap.Tooltip.getInstance(e.currentTarget)?.dispose();
-                }
                 startEdit(key);
             },
             "data-bs-toggle": "tooltip",

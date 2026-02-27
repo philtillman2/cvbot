@@ -45,7 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
         el.setAttribute("data-bs-title", text);
         el.setAttribute("aria-label", text);
         if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) return;
-        bootstrap.Tooltip.getInstance(el)?.dispose();
+        const instance = bootstrap.Tooltip.getInstance(el);
+        if (instance) {
+            instance.setContent?.({ ".tooltip-inner": text });
+            return;
+        }
         new bootstrap.Tooltip(el);
     }
 
