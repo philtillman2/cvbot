@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageProgressBar = document.getElementById("chatUsageProgressBar");
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
-    const nrTokensText = document.getElementById("nr-tokens");
     const chatInputArea = document.querySelector(".chat-input-area");
     const modelStorageKey = "cvbot.selectedModel";
 
@@ -334,24 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    async function updateTokenCount(candidateId) {
-        if (!nrTokensText) return;
-        if (!candidateId) {
-            nrTokensText.textContent = "—";
-            return;
-        }
-        nrTokensText.textContent = "...";
-        try {
-            const resp = await fetch(`/api/candidates/${candidateId}/work-experience/token-count`);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const payload = await resp.json();
-            nrTokensText.textContent = String(payload.nr_tokens ?? "—");
-        } catch (e) {
-            console.error(e);
-            nrTokensText.textContent = "—";
-        }
-    }
-
     // Render markdown in existing messages
     document.querySelectorAll(".message-assistant .message-content").forEach((el) => {
         if (typeof marked !== "undefined") {
@@ -359,7 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     initializeUsageSummary();
-    updateTokenCount(candidateSelect?.value);
     candidateSelect?.addEventListener("change", () => updateTokenCount(candidateSelect.value));
     scrollToBottom();
 

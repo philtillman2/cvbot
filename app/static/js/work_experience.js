@@ -658,11 +658,31 @@
         showSavedBadge();
     }
 
+    const nrTokensText = document.getElementById("nr-tokens");
+    async function updateTokenCount() {
+        if (!nrTokensText) return;
+        if (!candidateId) {
+            nrTokensText.textContent = "—";
+            return;
+        }
+        nrTokensText.textContent = "...";
+        try {
+            const resp = await fetch(`/api/candidates/${candidateId}/work-experience/token-count`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const payload = await resp.json();
+            nrTokensText.textContent = String(payload.nr_tokens ?? "—");
+        } catch (e) {
+            console.error(e);
+            nrTokensText.textContent = "—";
+        }
+    }
+
     /* ── init ─────────────────────────────────────────────── */
     document.addEventListener("DOMContentLoaded", () => {
         const downloadBtn = document.getElementById("downloadProfileBtn");
         const uploadBtn = document.getElementById("uploadProfileBtn");
         const uploadInput = document.getElementById("uploadProfileInput");
+        updateTokenCount();
         if (downloadBtn) {
             downloadBtn.addEventListener("click", async () => {
                 try {
