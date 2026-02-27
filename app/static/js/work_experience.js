@@ -326,7 +326,7 @@
                             h("div", { className: "we-meta" },
                                 emp.sector ? h("span", null, h("i", { className: "bi bi-building me-1" }), emp.sector) : null,
                                 emp.location ? h("span", null, h("i", { className: "bi bi-geo-alt me-1" }), emp.location) : null)),
-                        h("span", { className: "badge bg-secondary we-date-badge" }, `${formatDate(entry.start)} — ${formatDate(entry.end)}`)));
+                        h("span", { className: "badge bg-primary we-date-badge" }, `${formatDate(entry.start)} — ${formatDate(entry.end)}`)));
                 if (emp.description) header.append(h("p", { className: "mt-2 mb-0 text-body-secondary", style: "font-size:0.875rem" }, emp.description));
             }
 
@@ -362,7 +362,7 @@
                             h("div", null,
                                 h("h6", { className: "mb-0 we-role-title" }, role.title, pencilBtn(roleKey)),
                                 role.employment_type ? h("small", { className: "text-body-secondary" }, role.employment_type) : null),
-                            h("small", { className: "text-body-secondary text-nowrap" }, `${formatDate(role.start)} — ${formatDate(role.end)}`)));
+                            h("small", { className: "badge bg-secondary we-date-badge" }, `${formatDate(role.start)} — ${formatDate(role.end)}`)));
                     if (role.items && role.items.length) {
                         const items = h("div", { className: "we-items" });
                         role.items.forEach((it, ii) => {
@@ -468,7 +468,7 @@
                             h("div", { className: "we-meta" },
                                 h("span", null, h("i", { className: "bi bi-building me-1" }), edu.institution),
                                 edu.GPA ? h("span", null, h("i", { className: "bi bi-award me-1" }), "GPA: " + edu.GPA) : null)),
-                        h("span", { className: "badge bg-secondary we-date-badge" }, `${formatDate(edu.start)} — ${formatDate(edu.end)}`)));
+                        h("span", { className: "badge bg-primary we-date-badge" }, `${formatDate(edu.start)} — ${formatDate(edu.end)}`)));
                 if (!edu.completed) header.append(h("span", { className: "badge bg-warning text-dark mt-2" }, "Incomplete"));
                 if (edu.notes) header.append(h("p", { className: "mt-2 mb-0 text-body-secondary", style: "font-size:0.875rem" }, edu.notes));
 
@@ -561,7 +561,7 @@
                 if (pub.title) topLeft.append(h("h6", { className: "we-role-title mb-1" }, pub.title, pencilBtn(key)));
                 if (authors.length) topLeft.append(h("div", { className: "text-body-secondary", style: "font-size:0.85rem" }, authors.join(", ")));
                 top.append(topLeft);
-                if (dateStr) top.append(h("span", { className: "badge bg-secondary we-date-badge" }, dateStr));
+                if (dateStr) top.append(h("span", { className: "badge bg-primary we-date-badge" }, dateStr));
                 body.append(top);
 
                 const meta = h("div", { className: "we-pub-meta text-body-secondary", style: "font-size:0.85rem" });

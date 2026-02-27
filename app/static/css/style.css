@@ -80,6 +80,10 @@ body.contact-page {
     height: 100dvh;
 }
 
+.bg-primary {
+    background-color: var(--accent) !important;
+}
+
 /* ===== Sidebar ===== */
 .sidebar {
     width: 280px;
