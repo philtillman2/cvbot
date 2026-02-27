@@ -25,6 +25,8 @@
     <div class="card">
         <div class="card-body">
             <form method="post" action="/contact">
+                <input type="text" name="website" value="" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;" aria-hidden="true">
+                <input type="hidden" name="form_started_at" value="{{ form.form_started_at if form and form.form_started_at else form_started_at }}">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" class="form-control" id="name" name="name" value="{{ form.name if form else '' }}" required>
@@ -41,9 +43,21 @@
                     <label for="message" class="form-label">Message</label>
                     <textarea class="form-control" id="message" name="message" rows="7" required>{{ form.message if form else '' }}</textarea>
                 </div>
+                {% if contact_turnstile_enabled %}
+                <div class="mb-3">
+                    <div class="cf-turnstile" data-sitekey="{{ contact_turnstile_site_key }}"></div>
+                </div>
+                {% endif %}
                 <button type="submit" class="btn btn-primary">Send message</button>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% if contact_turnstile_enabled %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+{% endif %}
 {% endblock %}

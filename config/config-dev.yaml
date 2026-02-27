@@ -11,6 +11,12 @@ smtp:
 contact:
   email_from: phil.tillman@gmail.com
   email_to: phil.tillman@gmail.com
+  min_submit_time_enabled: true
+  min_submit_time_seconds: 3
+  turnstile_enabled: false
+  turnstile_site_key: ""
+  turnstile_secret_key: ""
+  turnstile_challenge_url: "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 models:
   openai/gpt-4o-mini: GPT-4o Mini
   openai/gpt-4o: GPT-4o

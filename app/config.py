@@ -23,6 +23,18 @@ else:
     config["smtp_use_tls"] = bool(smtp_use_tls)
 config["contact_email_from"] = contact_config.get("email_from", "")
 config["contact_email_to"] = contact_config.get("email_to", "")
+min_submit_time_enabled = contact_config.get("min_submit_time_enabled", True)
+if isinstance(min_submit_time_enabled, str):
+    config["contact_min_submit_time_enabled"] = min_submit_time_enabled.lower() in {"1", "true", "yes", "on"}
+else:
+    config["contact_min_submit_time_enabled"] = bool(min_submit_time_enabled)
+config["contact_min_submit_time_seconds"] = int(contact_config.get("min_submit_time_seconds", 3))
+turnstile_enabled = contact_config.get("turnstile_enabled", False)
+if isinstance(turnstile_enabled, str):
+    config["contact_turnstile_enabled"] = turnstile_enabled.lower() in {"1", "true", "yes", "on"}
+else:
+    config["contact_turnstile_enabled"] = bool(turnstile_enabled)
+config["contact_turnstile_site_key"] = contact_config.get("turnstile_site_key", "")
 
 if smtp_host := os.getenv("SMTP_HOST"):
     config["smtp_host"] = smtp_host
@@ -38,6 +50,10 @@ if contact_email_from := os.getenv("CONTACT_EMAIL_FROM"):
     config["contact_email_from"] = contact_email_from
 if contact_email_to := os.getenv("CONTACT_EMAIL_TO"):
     config["contact_email_to"] = contact_email_to
+if contact_turnstile_site_key := os.getenv("CONTACT_TURNSTILE_SITE_KEY"):
+    config["contact_turnstile_site_key"] = contact_turnstile_site_key
+if contact_turnstile_secret_key := os.getenv("CONTACT_TURNSTILE_SECRET_KEY"):
+    config["contact_turnstile_secret_key"] = contact_turnstile_secret_key
 
 class Settings(BaseSettings):
     openrouter_api_key: str = ""
@@ -56,6 +72,13 @@ class Settings(BaseSettings):
     smtp_use_tls: bool = True
     contact_email_from: str = ""
     contact_email_to: str = ""
+    contact_min_submit_time_enabled: bool = True
+    contact_min_submit_time_seconds: int = 3
+    contact_turnstile_enabled: bool = False
+    contact_turnstile_site_key: str = ""
+    contact_turnstile_secret_key: str = ""
+    contact_turnstile_challenge_url: str = ""
+
     class Config:
         env_file = "secrets/.env"
 
