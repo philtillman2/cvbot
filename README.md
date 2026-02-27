@@ -93,3 +93,7 @@ app/
 └── static/              # CSS and JavaScript
 data/candidates/         # Candidate JSON profiles
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE.md).
