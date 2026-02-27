@@ -49,6 +49,17 @@
     function numField(value, onChange, opts = {}) {
         return editableField(value ?? "", v => onChange(v === "" ? null : Number(v)), { type: "number", ...opts });
     }
+    function monthField(value, onChange, opts = {}) {
+        const el = document.createElement("select");
+        el.className = "we-edit-field form-select form-select-sm" + (opts.className ? " " + opts.className : "");
+        el.appendChild(h("option", { value: "" }, "Mon"));
+        for (let month = 1; month <= 12; month += 1) {
+            el.appendChild(h("option", { value: String(month) }, MONTHS[month]));
+        }
+        el.value = value == null ? "" : String(value);
+        el.addEventListener("change", e => onChange(e.target.value === "" ? null : Number(e.target.value)));
+        return el;
+    }
     function removeBtn(onClick) {
         return h("button", { className: "btn btn-sm btn-outline-danger we-remove-btn", onClick: e => { e.preventDefault(); onClick(); }, title: "Remove" },
             h("i", { className: "bi bi-x-lg" }));
@@ -60,14 +71,14 @@
     function dateFields(d) {
         return h("span", { className: "we-date-inline d-inline-flex gap-1 align-items-center" },
             numField(d.year, v => { d.year = v; }, { placeholder: "Year", className: "we-date-input" }),
-            numField(d.month, v => { d.month = v; }, { placeholder: "Mo", className: "we-date-input we-date-month" }));
+            monthField(d.month, v => { d.month = v; }, { className: "we-date-input we-date-month" }));
     }
     function endDateFields(d) {
         const wrap = h("span", { className: "we-date-inline d-inline-flex gap-1 align-items-center" });
         const cb = h("input", { type: "checkbox", className: "form-check-input me-1" });
         cb.checked = !!d.present;
         const yf = numField(d.year, v => { d.year = v; }, { placeholder: "Year", className: "we-date-input" });
-        const mf = numField(d.month, v => { d.month = v; }, { placeholder: "Mo", className: "we-date-input we-date-month" });
+        const mf = monthField(d.month, v => { d.month = v; }, { className: "we-date-input we-date-month" });
         const tog = () => { yf.disabled = d.present; mf.disabled = d.present; };
         cb.addEventListener("change", () => { d.present = cb.checked; if (d.present) { d.year = null; d.month = null; yf.value = ""; mf.value = ""; } tog(); });
         tog();
@@ -533,7 +544,7 @@
                         h("label", { style: "font-size:0.8rem" }, "Authors"), authList,
                         h("div", { className: "d-flex flex-wrap gap-2 mb-2" },
                             h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Year:"), numField(pub.date.year, v => { pub.date.year = v; }, { placeholder: "Year", className: "we-date-input" })),
-                            h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Mo:"), numField(pub.date.month, v => { pub.date.month = v; }, { placeholder: "Mo", className: "we-date-input we-date-month" })),
+                            h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Mo:"), monthField(pub.date.month, v => { pub.date.month = v; }, { className: "we-date-input we-date-month" })),
                             h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Day:"), numField(pub.date.day, v => { pub.date.day = v; }, { placeholder: "Day", className: "we-date-input we-date-month" }))),
                         h("div", { className: "d-flex flex-wrap gap-2 mb-2" },
                             editableField(pub.publication || pub.journal || "", v => { pub.publication = v; }, { placeholder: "Publication/journal" }),
