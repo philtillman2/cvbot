@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageProgressBar = document.getElementById("chatUsageProgressBar");
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
+    const nrTokensText = document.getElementById("nr-tokens");
     const chatInputArea = document.querySelector(".chat-input-area");
     const modelStorageKey = "cvbot.selectedModel";
 
@@ -383,7 +384,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // Create assistant placeholder
         const assistantDiv = appendMessage("assistant", "");
         assistantDiv.querySelector(".message-content").classList.add("streaming-cursor");
-
         try {
             const resp = await fetch(endpoint, {
                 method: "POST",

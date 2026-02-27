@@ -622,7 +622,7 @@ body.contact-page {
     color: var(--welcome-text);
 }
 
-.we-date-badge {
+.we-date-badge, .chat-token-badge {
     white-space: nowrap;
     font-weight: 500;
 }

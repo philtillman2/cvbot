@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse, Response
 from pathlib import Path
 from pydantic import ValidationError
 from starlette.templating import Jinja2Templates
+import tiktoken
 
 from app.database import get_db
 from app.models import WorkExperience
@@ -82,3 +83,21 @@ async def upload_work_experience(candidate_id: str, file: UploadFile = File(...)
         raise HTTPException(status_code=422, detail="Uploaded JSON does not match WorkExperience schema")
     await save_profile(candidate_id, profile)
     return JSONResponse({"ok": True, "profile": profile.model_dump()})
+
+def _nr_tokens_from_string(string: str, encoding_name: str) -> int:
+    encoding = tiktoken.get_encoding(encoding_name)
+    nr_tokens = len(encoding.encode(string))
+    return nr_tokens
+
+@router.get("/api//candidates/{candidate_d}/work-experience/token-count")
+async def get_nr_tokens(candidate_id: int):
+    db = await get_db()
+    rows = await db.execute_fetchall(
+        "SELECT c.work_experience " \
+        "FROM candidates c "
+        "WHERE c.id = ?",
+        (candidate_id,),
+    )
+    work_experience: str = rows[0]
+    nr_tokens = _nr_tokens_from_string(work_experience, "cl100k_base")
+    return JSONResponse({"nr_tokens": nr_tokens})
