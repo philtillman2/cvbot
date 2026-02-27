@@ -16,6 +16,7 @@
     --accent: #013178;
     --accent-middle: #0b50b8;
     --accent-subtle: #46628d;
+    --accent-highlight: #85a9e3;
     --mobile-bottom-ui-offset: 0px;
     --chat-input-area-height: 6rem;
 }
@@ -36,6 +37,7 @@
     --accent: #a855f7;
     --accent-middle: #733ca6;
     --accent-subtle: #39254e;
+    --accent-highlight: #733ca6;
     --mobile-bottom-ui-offset: 0px;
     --chat-input-area-height: 6rem;
 }
@@ -708,4 +710,13 @@ textarea.we-edit-field {
 /* ===== Toast overrides ===== */
 #savedToast {
     opacity: 0.85;
+}
+
+#closeSidebar {
+    color: var(--sidebar-text);
+    border-color: var(--sidebar-border);
+}
+
+#closeSidebar:hover {
+    background-color: var(--accent-highlight);
 }
