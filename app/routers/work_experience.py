@@ -89,8 +89,8 @@ def _nr_tokens_from_string(string: str, encoding_name: str) -> int:
     nr_tokens = len(encoding.encode(string))
     return nr_tokens
 
-@router.get("/api//candidates/{candidate_d}/work-experience/token-count")
-async def get_nr_tokens(candidate_id: int):
+@router.get("/api/candidates/{candidate_id}/work-experience/token-count")
+async def get_nr_tokens(candidate_id: str):
     db = await get_db()
     rows = await db.execute_fetchall(
         "SELECT c.work_experience " \
@@ -98,6 +98,8 @@ async def get_nr_tokens(candidate_id: int):
         "WHERE c.id = ?",
         (candidate_id,),
     )
-    work_experience: str = rows[0]
+    if not rows:
+        raise HTTPException(status_code=404, detail="Candidate not found")
+    work_experience = rows[0]["work_experience"] or ""
     nr_tokens = _nr_tokens_from_string(work_experience, "cl100k_base")
     return JSONResponse({"nr_tokens": nr_tokens})
