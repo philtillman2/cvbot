@@ -334,6 +334,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    async function updateTokenCount(candidateId) {
+        if (!nrTokensText) return;
+        if (!candidateId) {
+            nrTokensText.textContent = "—";
+            return;
+        }
+        nrTokensText.textContent = "...";
+        try {
+            const resp = await fetch(`/api/candidates/${candidateId}/work-experience/token-count`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const payload = await resp.json();
+            nrTokensText.textContent = String(payload.nr_tokens ?? "—");
+        } catch (e) {
+            console.error(e);
+            nrTokensText.textContent = "—";
+        }
+    }
+
     // Render markdown in existing messages
     document.querySelectorAll(".message-assistant .message-content").forEach((el) => {
         if (typeof marked !== "undefined") {
@@ -341,6 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     initializeUsageSummary();
+    updateTokenCount(candidateSelect?.value);
+    candidateSelect?.addEventListener("change", () => updateTokenCount(candidateSelect.value));
     scrollToBottom();
 
     // Send message
