@@ -164,6 +164,7 @@
             const err = await resp.json().catch(() => ({}));
             throw new Error(err.detail || resp.statusText);
         }
+        await updateTokenCount();
         for (const k of [...editingKeys]) takeSnapshot(k);
     }
 
@@ -655,6 +656,7 @@
         editingKeys.clear();
         Object.keys(snapshots).forEach(k => delete snapshots[k]);
         render();
+        await updateTokenCount();
         showSavedBadge();
     }
 
