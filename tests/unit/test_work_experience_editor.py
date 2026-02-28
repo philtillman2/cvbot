@@ -18,6 +18,7 @@ from app import database
 from app.services import candidate_loader
 from app.models import WorkExperience
 from app.services.candidate_loader import (
+    get_candidate,
     get_profile,
     get_profile_json,
     save_profile,
@@ -112,7 +113,7 @@ def test_download_work_experience_json(tmp_path: Path, test_candidate_source_dat
 def test_upload_work_experience_json_overwrites_db(
     tmp_path: Path, test_candidate_source_data
 ):
-    """POST upload endpoint should validate and overwrite candidate work_experience."""
+    """POST upload endpoint should accept Candidate JSON and overwrite data."""
 
     async def _run():
         async with UnitTestEnv(tmp_path, test_candidate_source_data):
@@ -120,8 +121,9 @@ def test_upload_work_experience_json_overwrites_db(
             from httpx import ASGITransport
             from app.main import app
 
-            updated = get_profile(TEST_CANDIDATE_ID).model_dump()
-            updated["summary"] = "Uploaded summary overwrite"
+            updated = json.loads(json.dumps(test_candidate_source_data))
+            updated["first_name"] = "Phil"
+            updated["work_experience"]["summary"] = "Uploaded summary overwrite"
 
             async with httpx.AsyncClient(
                 transport=ASGITransport(app=app), base_url="http://test"
@@ -139,6 +141,7 @@ def test_upload_work_experience_json_overwrites_db(
                 assert resp.status_code == 200
                 assert resp.json()["ok"] is True
 
+            assert get_candidate(TEST_CANDIDATE_ID).first_name == "Phil"
             assert get_profile(TEST_CANDIDATE_ID).summary == "Uploaded summary overwrite"
 
             db = await database.get_db()
@@ -148,6 +151,37 @@ def test_upload_work_experience_json_overwrites_db(
             )
             db_data = json.loads(rows[0]["work_experience"])
             assert db_data["work_experience"]["summary"] == "Uploaded summary overwrite"
+            assert db_data["first_name"] == "Phil"
+
+    _run_coro_in_thread(_run())
+
+
+def test_upload_rejects_non_candidate_json(tmp_path: Path, test_candidate_source_data):
+    """POST upload endpoint should reject WorkExperience-only JSON."""
+
+    async def _run():
+        async with UnitTestEnv(tmp_path, test_candidate_source_data):
+            import httpx
+            from httpx import ASGITransport
+            from app.main import app
+
+            work_only_payload = get_profile(TEST_CANDIDATE_ID).model_dump()
+
+            async with httpx.AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                resp = await client.post(
+                    f"/api/candidates/{TEST_CANDIDATE_ID}/work-experience/upload",
+                    files={
+                        "file": (
+                            "work_experience.json",
+                            json.dumps(work_only_payload),
+                            "application/json",
+                        )
+                    },
+                )
+                assert resp.status_code == 422
+                assert resp.json()["detail"] == "Uploaded JSON must match Candidate schema"
 
     _run_coro_in_thread(_run())
 

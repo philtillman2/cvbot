@@ -8,8 +8,8 @@ from starlette.templating import Jinja2Templates
 import tiktoken
 
 from app.database import get_db
-from app.models import WorkExperience
-from app.services.candidate_loader import get_candidate, load_candidates, save_profile
+from app.models import Candidate, WorkExperience
+from app.services.candidate_loader import get_candidate, load_candidates, save_candidate, save_profile
 
 router = APIRouter(tags=["work_experience"])
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
@@ -106,12 +106,15 @@ async def upload_work_experience(candidate_id: str, file: UploadFile = File(...)
         raise HTTPException(status_code=400, detail="Uploaded file must be UTF-8 JSON")
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON file")
+    required_keys = {"first_name", "middle_name", "last_name", "location", "work_experience"}
+    if not isinstance(payload, dict) or not required_keys.issubset(payload.keys()):
+        raise HTTPException(status_code=422, detail="Uploaded JSON must match Candidate schema")
     try:
-        profile = WorkExperience.model_validate(payload)
+        uploaded_candidate = Candidate.model_validate(payload)
     except ValidationError:
-        raise HTTPException(status_code=422, detail="Uploaded JSON does not match WorkExperience schema")
-    await save_profile(candidate_id, profile)
-    return JSONResponse({"ok": True, "profile": profile.model_dump()})
+        raise HTTPException(status_code=422, detail="Uploaded JSON must match Candidate schema")
+    await save_candidate(candidate_id, uploaded_candidate)
+    return JSONResponse({"ok": True, "profile": uploaded_candidate.work_experience.model_dump()})
 
 def _nr_tokens_from_string(string: str, encoding_name: str) -> int:
     encoding = tiktoken.get_encoding(encoding_name)
