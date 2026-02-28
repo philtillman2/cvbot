@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from app import database
+from app.services import candidate_loader
 from app.models import WorkExperience
 from app.services.candidate_loader import (
     get_profile,
@@ -48,10 +49,35 @@ def test_get_work_experience_page_contains_profile_json(
                 assert resp.status_code == 200
                 assert "window.__profileData" in resp.text
                 assert "work_experience.js" in resp.text
-                assert source_data["summary"][:40] in resp.text
-                assert source_data["profile"]["first_name"] in resp.text
-                assert source_data["profile"]["location"]["city"] in resp.text
+                assert source_data["work_experience"]["summary"][:40] in resp.text
+                assert source_data["first_name"] in resp.text
+                assert source_data["location"]["city"] in resp.text
 
+    _run_coro_in_thread(_run())
+
+
+def test_get_work_experience_page_reloads_empty_cache(
+    tmp_path: Path, test_candidate_source_data
+):
+    async def _run():
+        async with UnitTestEnv(tmp_path, test_candidate_source_data):
+            import httpx
+            from httpx import ASGITransport
+            from app.main import app
+
+            candidate_loader._candidates.clear()
+
+            async with httpx.AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
+                resp = await client.get(
+                    f"/work-experience?candidate_id={TEST_CANDIDATE_ID}"
+                )
+                assert resp.status_code == 200
+                assert source_data["work_experience"]["summary"][:40] in resp.text
+                assert "window.__profileData = null" not in resp.text
+
+    source_data = test_candidate_source_data
     _run_coro_in_thread(_run())
 
 
@@ -77,7 +103,7 @@ def test_download_work_experience_json(tmp_path: Path, test_candidate_source_dat
                     in resp.headers.get("content-disposition", "").lower()
                 )
                 body = resp.json()
-                assert body["summary"] == test_candidate_source_data["summary"]
+                assert body["summary"] == test_candidate_source_data["work_experience"]["summary"]
                 assert "work" in body
 
     _run_coro_in_thread(_run())
@@ -121,7 +147,7 @@ def test_upload_work_experience_json_overwrites_db(
                 (TEST_CANDIDATE_ID,),
             )
             db_data = json.loads(rows[0]["work_experience"])
-            assert db_data["summary"] == "Uploaded summary overwrite"
+            assert db_data["work_experience"]["summary"] == "Uploaded summary overwrite"
 
     _run_coro_in_thread(_run())
 
@@ -161,7 +187,7 @@ def test_put_saves_and_persists_edits(tmp_path: Path, test_candidate_source_data
                 (TEST_CANDIDATE_ID,),
             )
             db_data = json.loads(rows[0]["work_experience"])
-            assert db_data["summary"] == "Edited summary"
+            assert db_data["work_experience"]["summary"] == "Edited summary"
 
     _run_coro_in_thread(_run())
 

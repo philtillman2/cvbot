@@ -3,10 +3,10 @@ from pathlib import Path
 
 from app.config import settings
 from app.database import get_db
-from app.models import ProfileInfo, WorkExperience
+from app.models import Candidate, WorkExperience
 
-# In-memory cache: candidate_id -> WorkExperience
-_profiles: dict[str, WorkExperience] = {}
+# In-memory cache: candidate_id -> Candidate
+_candidates: dict[str, Candidate] = {}
 _profile_json: dict[str, str] = {}
 
 
@@ -22,20 +22,26 @@ def _slug_to_name_parts(slug: str) -> tuple[str, str, str | None]:
     return titled[0], titled[-1], " ".join(titled[1:-1])
 
 
-def _profile_to_name_parts(profile: ProfileInfo | None) -> tuple[str, str, str | None] | None:
-    if profile is None:
-        return None
-    first_name = (profile.first_name or "").strip()
-    last_name = (profile.last_name or "").strip()
-    middle_name = (profile.middle_name or "").strip()
+def _candidate_to_name_parts(candidate: Candidate) -> tuple[str, str, str | None] | None:
+    first_name = (candidate.first_name or "").strip()
+    last_name = (candidate.last_name or "").strip()
+    middle_name = (candidate.middle_name or "").strip()
     if not first_name or not last_name:
         return None
     return first_name, last_name, middle_name or None
 
 
+def _candidate_from_json(raw_json: str) -> Candidate:
+    payload = json.loads(raw_json)
+    if "work_experience" in payload:
+        return Candidate.model_validate(payload)
+    legacy_profile = WorkExperience.model_validate(payload)
+    return Candidate(work_experience=legacy_profile)
+
+
 async def load_candidates():
     """Scan data directory for candidate JSON files and register them."""
-    _profiles.clear()
+    _candidates.clear()
     _profile_json.clear()
     data_dir = Path(settings.data_dir)
 
@@ -44,9 +50,9 @@ async def load_candidates():
         "SELECT id, work_experience FROM candidates WHERE work_experience IS NOT NULL"
     )
     for row in rows:
-        profile = WorkExperience.model_validate_json(row["work_experience"])
-        _profiles[row["id"]] = profile
-        _profile_json[row["id"]] = row["work_experience"]
+        candidate = _candidate_from_json(row["work_experience"])
+        _candidates[row["id"]] = candidate
+        _profile_json[row["id"]] = candidate.model_dump_json()
 
     existing_rows = await db.execute_fetchall("SELECT id, work_experience FROM candidates")
     existing_ids = {row["id"] for row in existing_rows}
@@ -59,25 +65,35 @@ async def load_candidates():
         candidate_id = path.stem
         data = json.loads(path.read_text(encoding="utf-8"))
 
-        profile = WorkExperience.model_validate(data)
-        work_experience_json = profile.model_dump_json()
+        candidate = Candidate.model_validate(data)
+        work_experience_json = candidate.model_dump_json()
 
-        name_parts = _profile_to_name_parts(profile.profile)
+        name_parts = _candidate_to_name_parts(candidate)
         if name_parts is None:
             name_parts = _slug_to_name_parts(candidate_id)
         first_name, last_name, middle_name = name_parts
         if candidate_id in existing_ids:
             work_experience_to_store = work_experience_json
-            profile_to_cache = profile
+            candidate_to_cache = candidate
             if candidate_id in existing_with_work:
-                existing_profile = _profiles[candidate_id]
-                work_experience_to_store = _profile_json[candidate_id]
-                profile_to_cache = existing_profile
-                if existing_profile.profile is None and profile.profile is not None:
-                    profile_to_cache = existing_profile.model_copy(
-                        update={"profile": profile.profile}
+                existing_candidate = _candidates[candidate_id]
+                candidate_to_cache = existing_candidate
+                needs_metadata_update = (
+                    (not existing_candidate.first_name and bool(candidate.first_name))
+                    or (not existing_candidate.middle_name and bool(candidate.middle_name))
+                    or (not existing_candidate.last_name and bool(candidate.last_name))
+                    or (existing_candidate.location is None and candidate.location is not None)
+                )
+                if needs_metadata_update:
+                    candidate_to_cache = existing_candidate.model_copy(
+                        update={
+                            "first_name": candidate.first_name or existing_candidate.first_name,
+                            "middle_name": candidate.middle_name or existing_candidate.middle_name,
+                            "last_name": candidate.last_name or existing_candidate.last_name,
+                            "location": candidate.location or existing_candidate.location,
+                        }
                     )
-                    work_experience_to_store = profile_to_cache.model_dump_json()
+                work_experience_to_store = candidate_to_cache.model_dump_json()
 
             await db.execute(
                 "UPDATE candidates SET first_name = ?, last_name = ?, middle_name = ?, work_experience = ? "
@@ -90,7 +106,7 @@ async def load_candidates():
                     candidate_id,
                 ),
             )
-            _profiles[candidate_id] = profile_to_cache
+            _candidates[candidate_id] = candidate_to_cache
             _profile_json[candidate_id] = work_experience_to_store
         else:
             await db.execute(
@@ -98,27 +114,44 @@ async def load_candidates():
                 "VALUES (?, ?, ?, ?, ?)",
                 (candidate_id, first_name, last_name, middle_name, work_experience_json),
             )
-            _profiles[candidate_id] = profile
+            _candidates[candidate_id] = candidate
             _profile_json[candidate_id] = work_experience_json
     await db.commit()
 
 
-def get_profile(candidate_id: str) -> WorkExperience | None:
-    return _profiles.get(candidate_id)
+def get_candidate(candidate_id: str) -> Candidate | None:
+    return _candidates.get(candidate_id)
 
 
-def get_profile_json(candidate_id: str) -> str | None:
+def get_candidate_json(candidate_id: str) -> str | None:
     return _profile_json.get(candidate_id)
 
 
-async def save_profile(candidate_id: str, profile: WorkExperience) -> None:
-    """Persist a validated WorkExperience to DB and update in-memory cache."""
-    work_experience_json = profile.model_dump_json()
+async def save_candidate(candidate_id: str, candidate: Candidate) -> None:
+    candidate_json = candidate.model_dump_json()
     db = await get_db()
     await db.execute(
         "UPDATE candidates SET work_experience = ? WHERE id = ?",
-        (work_experience_json, candidate_id),
+        (candidate_json, candidate_id),
     )
     await db.commit()
-    _profiles[candidate_id] = profile
-    _profile_json[candidate_id] = work_experience_json
+    _candidates[candidate_id] = candidate
+    _profile_json[candidate_id] = candidate_json
+
+
+def get_profile(candidate_id: str) -> WorkExperience | None:
+    candidate = _candidates.get(candidate_id)
+    return candidate.work_experience if candidate else None
+
+
+def get_profile_json(candidate_id: str) -> str | None:
+    return get_candidate_json(candidate_id)
+
+
+async def save_profile(candidate_id: str, profile: WorkExperience) -> None:
+    """Persist validated WorkExperience into a Candidate and update cache/DB."""
+    existing = _candidates.get(candidate_id)
+    if existing is None:
+        raise ValueError(f"Candidate not found: {candidate_id}")
+    updated = existing.model_copy(update={"work_experience": profile})
+    await save_candidate(candidate_id, updated)

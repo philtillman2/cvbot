@@ -9,10 +9,18 @@ import tiktoken
 
 from app.database import get_db
 from app.models import WorkExperience
-from app.services.candidate_loader import get_profile, save_profile
+from app.services.candidate_loader import get_candidate, load_candidates, save_profile
 
 router = APIRouter(tags=["work_experience"])
 templates = Jinja2Templates(directory=Path(__file__).resolve().parent.parent / "templates")
+
+
+async def _get_candidate_with_reload(candidate_id: str):
+    candidate = get_candidate(candidate_id)
+    if candidate is None:
+        await load_candidates()
+        candidate = get_candidate(candidate_id)
+    return candidate
 
 
 @router.get("/work-experience")
@@ -27,22 +35,24 @@ async def work_experience_page(request: Request, candidate_id: str | None = None
     if not candidate_id and candidates:
         candidate_id = candidates[0]["id"]
 
-    profile = get_profile(candidate_id) if candidate_id else None
+    candidate = await _get_candidate_with_reload(candidate_id) if candidate_id else None
+    profile = candidate.work_experience if candidate else None
     profile_json = json.dumps(profile.model_dump(), default=str) if profile else "null"
     display_name = ""
     page_title = "Work Experience"
     page_subtitle = ""
-    if profile:
+    if candidate:
         display_name = next((c["display_name"] for c in candidates if c["id"] == candidate_id), "")
-        if profile.profile:
-            first = (profile.profile.first_name or "").strip()
-            middle = (profile.profile.middle_name or "").strip()
-            last = (profile.profile.last_name or "").strip()
-            profile_name = " ".join(part for part in (first, f"{middle[0]}.", last) if part)
+        first = (candidate.first_name or "").strip()
+        middle = (candidate.middle_name or "").strip()
+        last = (candidate.last_name or "").strip()
+        if first or middle or last:
+            middle_initial = f"{middle[0]}." if middle else ""
+            profile_name = " ".join(part for part in (first, middle_initial, last) if part)
             page_title = profile_name or display_name or page_title
-            if profile.profile.location:
-                city = (profile.profile.location.city or "").strip()
-                country = (profile.profile.location.country or "").strip()
+            if candidate.location:
+                city = (candidate.location.city or "").strip()
+                country = (candidate.location.country or "").strip()
                 page_subtitle = ", ".join(part for part in (city, country) if part)
         else:
             page_title = display_name or page_title
@@ -60,7 +70,8 @@ async def work_experience_page(request: Request, candidate_id: str | None = None
 
 @router.put("/api/candidates/{candidate_id}/work-experience")
 async def update_work_experience(candidate_id: str, body: WorkExperience):
-    existing = get_profile(candidate_id)
+    candidate = await _get_candidate_with_reload(candidate_id)
+    existing = candidate.work_experience if candidate else None
     if existing is None:
         raise HTTPException(status_code=404, detail="Candidate not found")
     await save_profile(candidate_id, body)
@@ -69,7 +80,8 @@ async def update_work_experience(candidate_id: str, body: WorkExperience):
 
 @router.get("/api/candidates/{candidate_id}/work-experience/download")
 async def download_work_experience(candidate_id: str):
-    profile = get_profile(candidate_id)
+    candidate = await _get_candidate_with_reload(candidate_id)
+    profile = candidate.work_experience if candidate else None
     if profile is None:
         raise HTTPException(status_code=404, detail="Candidate not found")
     return Response(
@@ -83,7 +95,8 @@ async def download_work_experience(candidate_id: str):
 
 @router.post("/api/candidates/{candidate_id}/work-experience/upload")
 async def upload_work_experience(candidate_id: str, file: UploadFile = File(...)):
-    existing = get_profile(candidate_id)
+    candidate = await _get_candidate_with_reload(candidate_id)
+    existing = candidate.work_experience if candidate else None
     if existing is None:
         raise HTTPException(status_code=404, detail="Candidate not found")
     raw = await file.read()

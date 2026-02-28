@@ -28,15 +28,21 @@ def test_startup_load_candidates_stores_and_uses_db_work_experience(
             assert rows[0]["middle_name"] == "Charles"
 
             db_json = json.loads(rows[0]["work_experience"])
-            assert db_json["summary"] == source_data["summary"]
-            assert db_json["profile"]["last_name"] == "Tillman"
+            assert db_json["work_experience"]["summary"] == source_data["work_experience"]["summary"]
+            assert db_json["last_name"] == "Tillman"
 
             replacement = {
-                "summary": "from db",
-                "skills": "",
-                "work": [],
-                "education": [],
-                "publications": [],
+                "first_name": "Philip",
+                "middle_name": "Charles",
+                "last_name": "Tillman",
+                "location": {"city": "Naarden", "country": "The Netherlands"},
+                "work_experience": {
+                    "summary": "from db",
+                    "skills": "",
+                    "work": [],
+                    "education": [],
+                    "publications": [],
+                },
             }
             await db.execute(
                 "UPDATE candidates SET work_experience = ? WHERE id = ?",
@@ -48,7 +54,25 @@ def test_startup_load_candidates_stores_and_uses_db_work_experience(
             rows_after = await db.execute_fetchall("SELECT id FROM candidates")
             assert len(rows_after) == 1
             profile_after = json.loads(get_profile_json(TEST_CANDIDATE_ID))
-            assert profile_after["summary"] == "from db"
-            assert profile_after["profile"]["last_name"] == "Tillman"
+            assert profile_after["work_experience"]["summary"] == "from db"
+            assert profile_after["last_name"] == "Tillman"
+
+            legacy_replacement = {
+                "summary": "legacy from db",
+                "skills": "",
+                "work": [],
+                "education": [],
+                "publications": [],
+            }
+            await db.execute(
+                "UPDATE candidates SET work_experience = ? WHERE id = ?",
+                (json.dumps(legacy_replacement), TEST_CANDIDATE_ID),
+            )
+            await db.commit()
+
+            await load_candidates()
+            profile_after_legacy = json.loads(get_profile_json(TEST_CANDIDATE_ID))
+            assert profile_after_legacy["work_experience"]["summary"] == "legacy from db"
+            assert profile_after_legacy["first_name"] == "Philip"
 
     _run_coro_in_thread(_run())

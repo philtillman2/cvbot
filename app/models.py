@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 # --- Candidate models (matching JSON schema) ---
@@ -113,7 +113,6 @@ class ProfileInfo(BaseModel):
 
 
 class WorkExperience(BaseModel):
-    profile: Optional[ProfileInfo] = None
     summary: str = ""
     skills: str = ""
     work: list[WorkEntry] = []
@@ -121,8 +120,17 @@ class WorkExperience(BaseModel):
     publications: list[Publication] = []
 
 
-class CandidateProfile(WorkExperience):
-    pass
+class Location(BaseModel):
+    city: str = ""
+    country: str = ""
+
+
+class Candidate(BaseModel):
+    first_name: str = ""
+    middle_name: str = ""
+    last_name: str = ""
+    location: Optional[Location] = None
+    work_experience: WorkExperience = Field(default_factory=WorkExperience)
 
 
 # --- API / DB models ---

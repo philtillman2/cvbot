@@ -1,311 +1,311 @@
 {
-    "profile": {
-        "first_name": "Philip",
-        "middle_name": "Charles",
-        "last_name": "Tillman",
-        "location": {
-            "city": "Naarden",
-            "country": "The Netherlands"
-        }
+    "first_name": "Philip",
+    "middle_name": "Charles",
+    "last_name": "Tillman",
+    "location": {
+        "city": "Naarden",
+        "country": "The Netherlands"
     },
-    "summary": "I am a Machine Learning Scientist and Engineer having over 15 years of experience developing and designing our innovative applications. I lead teams that deliver Machine Learning applications to customers as well as design platforms and tools to support the Machine Learning life cycle (MLOps / DevOps).\n\nML: Leading teams to apply modern Machine Learning models to customer-facing applications such as RAG and classification using modern methods (e.g., Claude, GPT, BERT, SPECTER) as well as deploying them at scale. I lead teams that go from prototype to deployments working with the customer to ensure that they have the best experience and can use them effectively.\n\nMLOps: As a former software developer and a machine learning scientist combined with my experience using and developing tooling for ML, I have a unique understanding of how we can design tools (platforms/systems) that support Machine Learning scientists. My experience with MLOps tools like Kedro, and Spark/Databricks, and the experience in building a deployment platform using Kubernetes (Java and Python) that can run inference efficiently and at the scale. My expertise also includes designing and building ML pipelines handling large amounts of data.",
-    "skills": "Main languages: Python, Java, Javascript, C#, CSS, HTML, SQL\n\nRecent technologies: Apache Spark (Databricks), Jupyter lab/notebooks, Docker, pandas, numpy, scikit-learn, Kubernetes, Helm, AWS (S3, EKS, DynamoDB, ECR, EC2), Qdrant, git, Flask, FastAPI, vLLM, Kedro, Pytorch, Spring (for Java), Rabbitmq, PostgreSQL, Angular\n\nI speak English (native), and Dutch (B2, passed Staatsexamen NT2, progamma II).",
-    "work": [
-        {
-            "start": {
-                "year": 2018,
-                "month": 1
-            },
-            "end": {
-                "present": true
-            },
-            "employer": {
-                "name": "Elsevier BV",
-                "description": "Elsevier is a publisher of around 17% of the world's academic research. Beyond publication, they are a global analytics company as well as a company that delivers AI/ML solutions for customers in the area of academia, government, life sciences, and chemistry",
-                "link": "https://www.elsevier.com/",
-                "sector": "Publising",
-                "location": "Amsterdam, The Netherlands"
-            },
-            
-            "roles": [
-                {
-                    "start": {
-                        "year": 2021,
-                        "month": 8
-                    },
-                    "end": {
-                        "present": true
-                    },
-                    "title": "Manager of Data Science",
-                    "employment_type": "Full time",
-                    "items": [
-                        {
-                            "title": "NSF Grant RAG",
-                            "description": "A chat bot that recommends grants to researchers and also gives US lawmakers to find what grants are funded where. It was a streamlit web application with SQLite and LangGraph for agentic RAG that integrated with Amazon Bedrock KnowledgeBase.",
-                            "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver customer-facing products like RAG (Retrieval Augmented Generation) and classifications. I was responsible for the E2E design and execution as well as determining the strategy to manage functional and non-functional quality of these systems as well as reporting and customer and stakeholder communication. We designed a streamlit agentic RAG chat prototype with a LangGraph backend. Production system was delivered FastAPI."
-                        },
-                        {
-                            "title": "ProjectX: ML Deployment platform",
-                            "description": "A scalable platform that our data scientists can deploy models for online inference and batch inference.",
-                            "contribution": "Designed and developed a scalable high-performance one-click machine learning deployment platform that enabled multiple teams to make their deliverables while simultaneously reducing costs (idle EC2 running instances). The platform is a Kubernetes-based application consisting of Java and Python microservices using Spring Boot and RabbitMQ with a consumer-producer architecture. Supported models ranged form BERT to Llama2 7b. We were able to do inference with a SciBERT-based classifier on a database of 80 million title-abstracts in 16.5 hours using 20 simultaneous GPU-enabled classifiers. I was the lead architect, developer and machine learning expert on the project composed of myself, a machine learning engineer and a data scientist."
-                        },
-                        {
-                            "title": "Subscription toolkit chatbot for Legal",
-                            "description": "The legal department needed a way to streamline questions our consultants have about contract issues regarding subscription. They had a long document called a subscription toolkit, but it was cumbersome for a person to scan through it. Therefore we set up a RAG solution so that they could chat with the toolkit and pull out the relevant answers quickly. Tech stack: FastAPI, Jinja2, SQLite, LangGraph that integrate with Amazon Bedrock KnowledgeBase.\n\nFeatures included\n\n- A cost dashboard to track token costs to LLMs sent to Amazon Bedrock LLMs like Claude.\n- A daily rate limiter that capped the maximum cost.\n- JWT authentication and user credential management.\nPrompt management so admins can edit their prompts and keep different versions.",
-                            "contribution": "I designed, implemented. I deployed it on Kubernetes. I implemented a application that they"
-                        },
-                        {
-                            "title": "Methods and Protocols Reboot",
-                            "description": "The goal was to extract methods and protocols from academic texts to the articles that used them and make that readily available to the researcher. The idea was to make a faceted search by methods detection and extracting key entities (via entity linking) which were the facets.",
-                            "contribution": "I led the data science part of the project working together with subject matter experts and taxonomy specialists. I designed and implemented an end-to-end pipeline (using Spark and Kedro) to link 18M+ articles of Science Direct with the experimental methods they use and extract protocols to create a faceted search for protocols and methods. This involved XML section extraction (using Spark and Xquery), method section detection (regex + classifier fall-back), entity linking. I also designed and implemented a testing notebook that tested results using a combination of entity filtering and BM25 text search. Metrics used were NDGC and MAP@k."
-                        },
-                        {
-                            "title": "MLOps",
-                            "description": "Supporting our data scientists with everything to do with deploying our systems (ML/AI) into prpoduct (like scaling and cost management, efficiency, etc.) along with tooling to support the ML/AI lifecycle",
-                            "contribution": "MLOps: Responsible for recommending the best MLOps practices by testing tools, like Sagemaker and Bedrock.\n\nDevOps: Responsible for managing the tooling and costs together with our DevOps team."
-                        }
-                    ]
+    "work_experience": {
+        "summary": "I am a Machine Learning Scientist and Engineer having over 15 years of experience developing and designing our innovative applications. I lead teams that deliver Machine Learning applications to customers as well as design platforms and tools to support the Machine Learning life cycle (MLOps / DevOps).\n\nML: Leading teams to apply modern Machine Learning models to customer-facing applications such as RAG and classification using modern methods (e.g., Claude, GPT, BERT, SPECTER) as well as deploying them at scale. I lead teams that go from prototype to deployments working with the customer to ensure that they have the best experience and can use them effectively.\n\nMLOps: As a former software developer and a machine learning scientist combined with my experience using and developing tooling for ML, I have a unique understanding of how we can design tools (platforms/systems) that support Machine Learning scientists. My experience with MLOps tools like Kedro, and Spark/Databricks, and the experience in building a deployment platform using Kubernetes (Java and Python) that can run inference efficiently and at the scale. My expertise also includes designing and building ML pipelines handling large amounts of data.",
+        "skills": "Main languages: Python, Java, Javascript, C#, CSS, HTML, SQL\n\nRecent technologies: Apache Spark (Databricks), Jupyter lab/notebooks, Docker, pandas, numpy, scikit-learn, Kubernetes, Helm, AWS (S3, EKS, DynamoDB, ECR, EC2), Qdrant, git, Flask, FastAPI, vLLM, Kedro, Pytorch, Spring (for Java), Rabbitmq, PostgreSQL, Angular\n\nI speak English (native), and Dutch (B2, passed Staatsexamen NT2, progamma II).",
+        "work": [
+            {
+                "start": {
+                    "year": 2018,
+                    "month": 1
                 },
-                {
-                    "start": {
-                        "year": 2020,
-                        "month": 4
-                    },
-                    "end": {
-                        "year": 2024,
-                        "month": 9
-                    },
-                    "title": "Industry Lab Manager - ICAI Discovery Lab",
-                    "employment_type": "Part time",
-                    "items": [
-                        {
-                            "title": "Industry Lab Manager",
-                            "description": "The Discovery Lab is a ICAI lab that conducts research that is a partnership between the University of Amsterdam, the Free University of Amsterdam, Elsevier. The lab consisted of 4 Work Packages conducted by 3 PhD students and 2 Post Doctoral resaerchers.",
-                            "contribution": "I am responsible for the alignment of the Elsevier's strategic business activities and the lab's research activities.\n\nThe Discovery Lab is a collaboration between the Vrije Universiteit of Amsterdam and the University of Amsterdam focused on machine learning and artificial intelligence. \n\nhttps://discoverylab.ai/"
-                        }
-                    ]
+                "end": {
+                    "present": true
                 },
-                {
-                    "start": {
-                        "year": 2019,
-                        "month": 6
-                    },
-                    "end": {
-                        "year": 2021,
-                        "month": 8
-                    },
-                    "title": "Senior Machine Learning Scientist",
-                    "employment_type": "Full time",
-                    "items": [
-                        {
-                            "title": "Chinese Ministry of Education subject classifier",
-                            "description": "Deliver a subject classifier and classify all of Scopus abstracts (67M+) based on the Chinese Ministry of Education taxonomy. The taxonomy consisted of 111 classes including things like cybersecurity, physics, chinese medicine, and forestry studies. The challenge was to procure additional training data using semi-automated methods and evaluate real-world quality taking into account the limitations of this new procured data to be used in metrics that are meaningful. Metrics used was pecision/recall/f-score of the new training data with additional spot checks by subject matter experts",
-                            "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver classifications based with FastText-BERT ensemble model. I defined the technical plan (like defining the model architecture), defined the metrics we used, defined the testing plan, ran experiments, and communicated progress & results to stakeholders."
-                        }
-                    ]
+                "employer": {
+                    "name": "Elsevier BV",
+                    "description": "Elsevier is a publisher of around 17% of the world's academic research. Beyond publication, they are a global analytics company as well as a company that delivers AI/ML solutions for customers in the area of academia, government, life sciences, and chemistry",
+                    "link": "https://www.elsevier.com/",
+                    "sector": "Publising",
+                    "location": "Amsterdam, The Netherlands"
                 },
-                {
-                    "start": {
-                        "year": 2018,
-                        "month": 1
+                
+                "roles": [
+                    {
+                        "start": {
+                            "year": 2021,
+                            "month": 8
+                        },
+                        "end": {
+                            "present": true
+                        },
+                        "title": "Manager of Data Science",
+                        "employment_type": "Full time",
+                        "items": [
+                            {
+                                "title": "NSF Grant RAG",
+                                "description": "A chat bot that recommends grants to researchers and also gives US lawmakers to find what grants are funded where. It was a streamlit web application with SQLite and LangGraph for agentic RAG that integrated with Amazon Bedrock KnowledgeBase.",
+                                "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver customer-facing products like RAG (Retrieval Augmented Generation) and classifications. I was responsible for the E2E design and execution as well as determining the strategy to manage functional and non-functional quality of these systems as well as reporting and customer and stakeholder communication. We designed a streamlit agentic RAG chat prototype with a LangGraph backend. Production system was delivered FastAPI."
+                            },
+                            {
+                                "title": "ProjectX: ML Deployment platform",
+                                "description": "A scalable platform that our data scientists can deploy models for online inference and batch inference.",
+                                "contribution": "Designed and developed a scalable high-performance one-click machine learning deployment platform that enabled multiple teams to make their deliverables while simultaneously reducing costs (idle EC2 running instances). The platform is a Kubernetes-based application consisting of Java and Python microservices using Spring Boot and RabbitMQ with a consumer-producer architecture. Supported models ranged form BERT to Llama2 7b. We were able to do inference with a SciBERT-based classifier on a database of 80 million title-abstracts in 16.5 hours using 20 simultaneous GPU-enabled classifiers. I was the lead architect, developer and machine learning expert on the project composed of myself, a machine learning engineer and a data scientist."
+                            },
+                            {
+                                "title": "Subscription toolkit chatbot for Legal",
+                                "description": "The legal department needed a way to streamline questions our consultants have about contract issues regarding subscription. They had a long document called a subscription toolkit, but it was cumbersome for a person to scan through it. Therefore we set up a RAG solution so that they could chat with the toolkit and pull out the relevant answers quickly. Tech stack: FastAPI, Jinja2, SQLite, LangGraph that integrate with Amazon Bedrock KnowledgeBase.\n\nFeatures included\n\n- A cost dashboard to track token costs to LLMs sent to Amazon Bedrock LLMs like Claude.\n- A daily rate limiter that capped the maximum cost.\n- JWT authentication and user credential management.\nPrompt management so admins can edit their prompts and keep different versions.",
+                                "contribution": "I designed, implemented. I deployed it on Kubernetes. I implemented a application that they"
+                            },
+                            {
+                                "title": "Methods and Protocols Reboot",
+                                "description": "The goal was to extract methods and protocols from academic texts to the articles that used them and make that readily available to the researcher. The idea was to make a faceted search by methods detection and extracting key entities (via entity linking) which were the facets.",
+                                "contribution": "I led the data science part of the project working together with subject matter experts and taxonomy specialists. I designed and implemented an end-to-end pipeline (using Spark and Kedro) to link 18M+ articles of Science Direct with the experimental methods they use and extract protocols to create a faceted search for protocols and methods. This involved XML section extraction (using Spark and Xquery), method section detection (regex + classifier fall-back), entity linking. I also designed and implemented a testing notebook that tested results using a combination of entity filtering and BM25 text search. Metrics used were NDGC and MAP@k."
+                            },
+                            {
+                                "title": "MLOps",
+                                "description": "Supporting our data scientists with everything to do with deploying our systems (ML/AI) into prpoduct (like scaling and cost management, efficiency, etc.) along with tooling to support the ML/AI lifecycle",
+                                "contribution": "MLOps: Responsible for recommending the best MLOps practices by testing tools, like Sagemaker and Bedrock.\n\nDevOps: Responsible for managing the tooling and costs together with our DevOps team."
+                            }
+                        ]
                     },
-                    "end": {
-                        "year": 2019,
-                        "month": 6
+                    {
+                        "start": {
+                            "year": 2020,
+                            "month": 4
+                        },
+                        "end": {
+                            "year": 2024,
+                            "month": 9
+                        },
+                        "title": "Industry Lab Manager - ICAI Discovery Lab",
+                        "employment_type": "Part time",
+                        "items": [
+                            {
+                                "title": "Industry Lab Manager",
+                                "description": "The Discovery Lab is a ICAI lab that conducts research that is a partnership between the University of Amsterdam, the Free University of Amsterdam, Elsevier. The lab consisted of 4 Work Packages conducted by 3 PhD students and 2 Post Doctoral resaerchers.",
+                                "contribution": "I am responsible for the alignment of the Elsevier's strategic business activities and the lab's research activities.\n\nThe Discovery Lab is a collaboration between the Vrije Universiteit of Amsterdam and the University of Amsterdam focused on machine learning and artificial intelligence. \n\nhttps://discoverylab.ai/"
+                            }
+                        ]
                     },
-                    "title": "Machine Learning Scientist",
-                    "employment_type": "Full time",
-                    "items": [
-                        {
-                            "title": "Mendeley citation deduplication",
-                            "description": "Mendeley is crowd-sourced citation database consisting of 3+ billion citation, many of which are duplicates.",
-                            "contribution": "Successfully productionized a replacement solution for large-scale de-duplication system for a massive citation database of 3+ billion records using MinHash and locality sensitive hashing (LSH) on Spark. The system was a two-stage duplicates detection, stage 1: LSH + MinHash tp select candidate duplicates and stage 2: Use a trained classifier (Random-Forest classifier) to determine if the candidates are actual duplicates.\n\nI was responsible for taking the prototype into production by working with Software Engineers as well as fine-tuning the end-to-end system which includes training the classifier. The solution (including re-training of the model) was handed over to the Mendeley team. This replaced a previous system that was completely broken since it could not handle the scale at which it needed to run."
+                    {
+                        "start": {
+                            "year": 2019,
+                            "month": 6
                         },
-                        {
-                            "title": "DivaBrowser",
-                            "description": "Elsevier run annotations over 16M+ documents and we needed a targeted way to assess changes to the annotation engine so as to prevent negative side-effects",
-                            "contribution": "Designed and implemented a testing framework of Elsevier's core annotation engine to ensure that the migration of that system was done with same or better quality. This was a web application that made a diff of millions of annotation changes. These were grouped in a logical way so as to be efficient to view the scope and effects of changes."
+                        "end": {
+                            "year": 2021,
+                            "month": 8
                         },
-                        {
-                            "title": "OmniScience classification",
-                            "description": "OmniScience classification is a service, re-used by many applications, that classified text (like abstracts) into classes like 'galactic astrophysics' or 'micro-biology'. This is used at scale on 16M+ documents in Science Direct.",
-                            "contribution": "Designed and implemented core classification services. Developed a FastText-based classifier and deployed that on Spark (batch-processing) and in online API service."
-                        },
-                        {
-                            "title": "Methods and Protocols",
-                            "description": "This was part of the science transparency initiative. The problem was that many article results were not reproducible since their methods and protocols they used were not readily available. The goal was to extract methods and protocols from academic texts to the articles that used them and make that readily available to the researcher.",
-                            "contribution": "Designed and implemented a prototype of an end-to-end pipeline to link articles with the experimental methods they use and extract protocols to create a faceted search for protocols and methods."
-                        },
-                        {
-                            "title": "Omniscience viewer",
-                            "description": "A pure javascript viewer based on D3 that could view a taxonomy (a Directed Acyclic Graph or DAG) of 250K concepts.",
-                            "contribution": "I designed, implemented, deployed and supported it. A big challenge was how to view such a large taxonomy. The solution was to render only a small part (no more that 5000 nodes). Another challenge was how to view concepts that have multiple parents which I solved by duplicating the nodes and devising navigation tricks to switch between them. I implemented search by concept name or id."
-                        },
-                        {
-                            "title": "Master's Thesis supervision",
-                            "description": "",
-                            "contribution": "Supervised masters student theses in AI and Data Science that investigated how we can improve classification using state-of-the-art models like BERT or Elmo as well as leveraging the hierarchical information to boost performance."
-                        },
-                        {
-                            "title": "Word disambiguation",
-                            "description": "When annotating text for a concept that links to ambiguous word. like 'depression', there are many false positives due to its ambiguity. The goal was how to do this on a massive scale (16M+) documents.",
-                            "contribution": "Assisted in the design and investigation of approaches to word sense disambiguation which is a main stumbling block for our core annotation service."
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "start": {
-                "year": 2011,
-                "month": 9
-            },
-            "end": {
-                "year": 2017,
-                "month": 12
-            },
-            "employer": {
-                "name": "RadialSG",
-                "sector": "Oil & Gas",
-                "location": "Woerden, The Netherlands",
-                "description": "RadialSG makes innovative solutions to the publication of technical documentation for the oil and gas industry as well as other industries. We focus on high performance solutions that intelligently link documents (like technical drawings) together without the need for manual work including scanned documents. We ensure that the solution performs fast, is scalable (~300K pdf documents), and gives accurate results."
-            },
-            "roles": [
-                {
-                    "start": {
-                        "year": 2011,
-                        "month": 9
+                        "title": "Senior Machine Learning Scientist",
+                        "employment_type": "Full time",
+                        "items": [
+                            {
+                                "title": "Chinese Ministry of Education subject classifier",
+                                "description": "Deliver a subject classifier and classify all of Scopus abstracts (67M+) based on the Chinese Ministry of Education taxonomy. The taxonomy consisted of 111 classes including things like cybersecurity, physics, chinese medicine, and forestry studies. The challenge was to procure additional training data using semi-automated methods and evaluate real-world quality taking into account the limitations of this new procured data to be used in metrics that are meaningful. Metrics used was pecision/recall/f-score of the new training data with additional spot checks by subject matter experts",
+                                "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver classifications based with FastText-BERT ensemble model. I defined the technical plan (like defining the model architecture), defined the metrics we used, defined the testing plan, ran experiments, and communicated progress & results to stakeholders."
+                            }
+                        ]
                     },
-                    "end": {
-                        "year": 2017,
-                        "month": 12
-                    },
-                    "title": "Software developer",
-                    "employment_type": "Full time",
-                    "items": [
-                        {
-                            "title": "Redesign of Viewport",
-                            "description": "Viewport is a web application that links all documents for oil and gas platforms. We link P&ID diagrams to manuals, equipment, etc. which is fundamental for the proper visibility and maintenance of all parts of extremely complex systems like an oil & gas platform.",
-                            "contribution": "Was one of the principal architects of a total redesign of our chief product, Viewport. This includes all aspects of Viewport, especially the design of the data model, search, Optical Character Recognition (OCR), and the way in which data is mined, stored, processed, retrieved, and displayed."
+                    {
+                        "start": {
+                            "year": 2018,
+                            "month": 1
                         },
-                        {
-                            "title": "Lead deployment and configuration of Viewport for clients",
-                            "description": "Viewport is installed on-premises of clients like Totaal.",
-                            "contribution": "Was the implementation and technical lead on various successful projects involving implementation of a new Viewport installation (installation, configuration, data imports, analysis and reporting)."
+                        "end": {
+                            "year": 2019,
+                            "month": 6
                         },
-                        {
-                            "title": "Text classifier",
-                            "description": "This classified any number of documents by subjects",
-                            "contribution": "Successfully executed a text classification project by designing and implementing text classification models from machine learning. Using NaiveBayes, model ensembling, automatic feature extraction, etc. to meet the stringent client required accuracy and false negative requirements."
-                        },
-                        {
-                            "title": "Client Suppport",
-                            "description": "",
-                            "contribution": "Supported clients directly and our Implementation Consultants. This includes installation, performance improvements, scalability issues, new feature requests, custom reports on data quality and bug fixes."
-                        },
-                        {
-                            "title": "",
-                            "description": "",
-                            "contribution": "Supported sales and marketing by designing and implementing proof of concepts."
-                        },
-                        {
-                            "title": "OCR improvements",
-                            "description": "",
-                            "contribution": "Refined and tuned mission critical parts like OCR (Optical Character Recognition) on technical drawings that is key to our flagship product Viewport. By segmenting ocr pipeline we improved the accuracy and recall as well as tune the performance and acceptance testing."
-                        },
-                        {
-                            "title": "Infrastructure",
-                            "description": "",
-                            "contribution": "Maintained server infrastructure and cloud based installations."
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    "education": [
-        {
-            "start": {
-                "year": 2000,
-                "month": 9
+                        "title": "Machine Learning Scientist",
+                        "employment_type": "Full time",
+                        "items": [
+                            {
+                                "title": "Mendeley citation deduplication",
+                                "description": "Mendeley is crowd-sourced citation database consisting of 3+ billion citation, many of which are duplicates.",
+                                "contribution": "Successfully productionized a replacement solution for large-scale de-duplication system for a massive citation database of 3+ billion records using MinHash and locality sensitive hashing (LSH) on Spark. The system was a two-stage duplicates detection, stage 1: LSH + MinHash tp select candidate duplicates and stage 2: Use a trained classifier (Random-Forest classifier) to determine if the candidates are actual duplicates.\n\nI was responsible for taking the prototype into production by working with Software Engineers as well as fine-tuning the end-to-end system which includes training the classifier. The solution (including re-training of the model) was handed over to the Mendeley team. This replaced a previous system that was completely broken since it could not handle the scale at which it needed to run."
+                            },
+                            {
+                                "title": "DivaBrowser",
+                                "description": "Elsevier run annotations over 16M+ documents and we needed a targeted way to assess changes to the annotation engine so as to prevent negative side-effects",
+                                "contribution": "Designed and implemented a testing framework of Elsevier's core annotation engine to ensure that the migration of that system was done with same or better quality. This was a web application that made a diff of millions of annotation changes. These were grouped in a logical way so as to be efficient to view the scope and effects of changes."
+                            },
+                            {
+                                "title": "OmniScience classification",
+                                "description": "OmniScience classification is a service, re-used by many applications, that classified text (like abstracts) into classes like 'galactic astrophysics' or 'micro-biology'. This is used at scale on 16M+ documents in Science Direct.",
+                                "contribution": "Designed and implemented core classification services. Developed a FastText-based classifier and deployed that on Spark (batch-processing) and in online API service."
+                            },
+                            {
+                                "title": "Methods and Protocols",
+                                "description": "This was part of the science transparency initiative. The problem was that many article results were not reproducible since their methods and protocols they used were not readily available. The goal was to extract methods and protocols from academic texts to the articles that used them and make that readily available to the researcher.",
+                                "contribution": "Designed and implemented a prototype of an end-to-end pipeline to link articles with the experimental methods they use and extract protocols to create a faceted search for protocols and methods."
+                            },
+                            {
+                                "title": "Omniscience viewer",
+                                "description": "A pure javascript viewer based on D3 that could view a taxonomy (a Directed Acyclic Graph or DAG) of 250K concepts.",
+                                "contribution": "I designed, implemented, deployed and supported it. A big challenge was how to view such a large taxonomy. The solution was to render only a small part (no more that 5000 nodes). Another challenge was how to view concepts that have multiple parents which I solved by duplicating the nodes and devising navigation tricks to switch between them. I implemented search by concept name or id."
+                            },
+                            {
+                                "title": "Master's Thesis supervision",
+                                "description": "",
+                                "contribution": "Supervised masters student theses in AI and Data Science that investigated how we can improve classification using state-of-the-art models like BERT or Elmo as well as leveraging the hierarchical information to boost performance."
+                            },
+                            {
+                                "title": "Word disambiguation",
+                                "description": "When annotating text for a concept that links to ambiguous word. like 'depression', there are many false positives due to its ambiguity. The goal was how to do this on a massive scale (16M+) documents.",
+                                "contribution": "Assisted in the design and investigation of approaches to word sense disambiguation which is a main stumbling block for our core annotation service."
+                            }
+                        ]
+                    }
+                ]
             },
-            "end": {
-                "year": 2007,
-                "month": 6
-            },
-            "degree": "PhD",
-            "institution": "University of Pittsburgh",
-            "subjects": [
-                "Physics"
-            ],
-            "GPA": "3.8",
-            "notes": "",
-            "completed": true,
-            "dissertation": {
-                "title": "Deformation Quantization and the Fedosov Star-Product on Constant Curvature Manifolds of Codimension One",
-                "description": "Value of Work: The purpose of this work was to show that deformation quantization can be a viable alternative to other quantization methods by reproducing well-known results for dS/AdS space-times.\nValue Added: I performed the Fedosov deformation quantization algorithm on all constant curvature manifolds of codimension one (this includes the dS/AdS spacetimes). Also, I simplified and clarified the physical justifications for all steps in the algorithm.\nSkills Used: Differential geometry, Algebra, PDE’s, physical intuition.\nMeasurable achievements: First author on 3 papers published in leading journals and presented at several international conferences",
-                "advisors": ["George Sparling", "E. Ted Newman"],
-                "primary_research": "Quantum Mechanics/Quantum Field Theory on Curved Space-Times"
+            {
+                "start": {
+                    "year": 2011,
+                    "month": 9
+                },
+                "end": {
+                    "year": 2017,
+                    "month": 12
+                },
+                "employer": {
+                    "name": "RadialSG",
+                    "sector": "Oil & Gas",
+                    "location": "Woerden, The Netherlands",
+                    "description": "RadialSG makes innovative solutions to the publication of technical documentation for the oil and gas industry as well as other industries. We focus on high performance solutions that intelligently link documents (like technical drawings) together without the need for manual work including scanned documents. We ensure that the solution performs fast, is scalable (~300K pdf documents), and gives accurate results."
+                },
+                "roles": [
+                    {
+                        "start": {
+                            "year": 2011,
+                            "month": 9
+                        },
+                        "end": {
+                            "year": 2017,
+                            "month": 12
+                        },
+                        "title": "Software developer",
+                        "employment_type": "Full time",
+                        "items": [
+                            {
+                                "title": "Redesign of Viewport",
+                                "description": "Viewport is a web application that links all documents for oil and gas platforms. We link P&ID diagrams to manuals, equipment, etc. which is fundamental for the proper visibility and maintenance of all parts of extremely complex systems like an oil & gas platform.",
+                                "contribution": "Was one of the principal architects of a total redesign of our chief product, Viewport. This includes all aspects of Viewport, especially the design of the data model, search, Optical Character Recognition (OCR), and the way in which data is mined, stored, processed, retrieved, and displayed."
+                            },
+                            {
+                                "title": "Lead deployment and configuration of Viewport for clients",
+                                "description": "Viewport is installed on-premises of clients like Totaal.",
+                                "contribution": "Was the implementation and technical lead on various successful projects involving implementation of a new Viewport installation (installation, configuration, data imports, analysis and reporting)."
+                            },
+                            {
+                                "title": "Text classifier",
+                                "description": "This classified any number of documents by subjects",
+                                "contribution": "Successfully executed a text classification project by designing and implementing text classification models from machine learning. Using NaiveBayes, model ensembling, automatic feature extraction, etc. to meet the stringent client required accuracy and false negative requirements."
+                            },
+                            {
+                                "title": "Client Suppport",
+                                "description": "",
+                                "contribution": "Supported clients directly and our Implementation Consultants. This includes installation, performance improvements, scalability issues, new feature requests, custom reports on data quality and bug fixes."
+                            },
+                            {
+                                "title": "",
+                                "description": "",
+                                "contribution": "Supported sales and marketing by designing and implementing proof of concepts."
+                            },
+                            {
+                                "title": "OCR improvements",
+                                "description": "",
+                                "contribution": "Refined and tuned mission critical parts like OCR (Optical Character Recognition) on technical drawings that is key to our flagship product Viewport. By segmenting ocr pipeline we improved the accuracy and recall as well as tune the performance and acceptance testing."
+                            },
+                            {
+                                "title": "Infrastructure",
+                                "description": "",
+                                "contribution": "Maintained server infrastructure and cloud based installations."
+                            }
+                        ]
+                    }
+                ]
             }
-        },
-        {
-            "start": {
-                "year": 1995,
-                "month": 9
+        ],
+        "education": [
+            {
+                "start": {
+                    "year": 2000,
+                    "month": 9
+                },
+                "end": {
+                    "year": 2007,
+                    "month": 6
+                },
+                "degree": "PhD",
+                "institution": "University of Pittsburgh",
+                "subjects": [
+                    "Physics"
+                ],
+                "GPA": "3.8",
+                "notes": "",
+                "completed": true,
+                "dissertation": {
+                    "title": "Deformation Quantization and the Fedosov Star-Product on Constant Curvature Manifolds of Codimension One",
+                    "description": "Value of Work: The purpose of this work was to show that deformation quantization can be a viable alternative to other quantization methods by reproducing well-known results for dS/AdS space-times.\nValue Added: I performed the Fedosov deformation quantization algorithm on all constant curvature manifolds of codimension one (this includes the dS/AdS spacetimes). Also, I simplified and clarified the physical justifications for all steps in the algorithm.\nSkills Used: Differential geometry, Algebra, PDE’s, physical intuition.\nMeasurable achievements: First author on 3 papers published in leading journals and presented at several international conferences",
+                    "advisors": ["George Sparling", "E. Ted Newman"],
+                    "primary_research": "Quantum Mechanics/Quantum Field Theory on Curved Space-Times"
+                }
             },
-            "end": {
-                "year": 2000,
-                "month": 6
+            {
+                "start": {
+                    "year": 1995,
+                    "month": 9
+                },
+                "end": {
+                    "year": 2000,
+                    "month": 6
+                },
+                "degree": "BS",
+                "institution": "University of Pittsburgh",
+                "subjects": [
+                    "Physics and Astronomy",
+                    "Mathematics"
+                ],
+                "GPA": "3.8",
+                "notes": "",
+                "completed": true
+            }
+        ],
+        "publications": [
+            {
+                "title": "Grammatical structures and oral fluency in immediate task repetition: Trigrams across repeated performances",
+                "abstract": "In this study we examine to what extent words and grammatical structures are re-used when a speaking task is repeated with the same content (i.e., specific task repetition). We examine this re-use, which has been argued to support proceduralization and fluency development (N. de Jong & Perfetti, 2011), under both constant and increasing time pressure, and we investigate the correlation between re-use and fluency. The analyses are performed not only on individual words but also on trigrams, which are sequences of three words (e.g., the red car; here: lexical trigrams) or three parts of speech (e.g., det adj noun: POS trigrams), to capture grammatical structure. Thirty-nine adult ESL speakers completed repeated retellings of one to three picture stories. One group followed the 4/3/2 procedure (Nation, 1989), which involves three iterations with gradually increasing time pressure; for the other group the available time was constant. The extent of re-use of words and grammatical structures across task iterations was calculated using cosine similarity with tf-idf weighting (Manning, Raghavan, & Schütze, 2008), which adjusts for the frequency of words or trigrams, both within an iteration and across iterations and speakers. It was found that immediate task repetition had a strong effect on re-use at the level of individual words and trigrams, but increasing time pressure did not. The relationship between re-use and fluency was variable, but showed higher re-use for speakers struggling with fluency. We conclude that, if fluency development is to be stimulated by re-use of words and grammatical structures, it can be done with specific task repetition, whether under increasing time pressure or not.",
+                "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
+                "date": {
+                    "year": 2018,
+                    "month": 10,
+                    "day": 1
+                },
+                "isbn": 9789027263780,
+                "editor": "M. Bygate",
+                "publication": "Learning Language through Task Repetition",
+                "pages": {"start": 43, "end": 73},
+                "publisher": "Amsterdam: John Benjamins",
+                "doi": "10.1075/tblt.11.02jon",
+                "links": [
+                    "http://jbe-platform.com/content/books/9789027263780-tblt.11.02jon"
+                ]
             },
-            "degree": "BS",
-            "institution": "University of Pittsburgh",
-            "subjects": [
-                "Physics and Astronomy",
-                "Mathematics"
-            ],
-            "GPA": "3.8",
-            "notes": "",
-            "completed": true
-        }
-    ],
-    "publications": [
-        {
-            "title": "Grammatical structures and oral fluency in immediate task repetition: Trigrams across repeated performances",
-            "abstract": "In this study we examine to what extent words and grammatical structures are re-used when a speaking task is repeated with the same content (i.e., specific task repetition). We examine this re-use, which has been argued to support proceduralization and fluency development (N. de Jong & Perfetti, 2011), under both constant and increasing time pressure, and we investigate the correlation between re-use and fluency. The analyses are performed not only on individual words but also on trigrams, which are sequences of three words (e.g., the red car; here: lexical trigrams) or three parts of speech (e.g., det adj noun: POS trigrams), to capture grammatical structure. Thirty-nine adult ESL speakers completed repeated retellings of one to three picture stories. One group followed the 4/3/2 procedure (Nation, 1989), which involves three iterations with gradually increasing time pressure; for the other group the available time was constant. The extent of re-use of words and grammatical structures across task iterations was calculated using cosine similarity with tf-idf weighting (Manning, Raghavan, & Schütze, 2008), which adjusts for the frequency of words or trigrams, both within an iteration and across iterations and speakers. It was found that immediate task repetition had a strong effect on re-use at the level of individual words and trigrams, but increasing time pressure did not. The relationship between re-use and fluency was variable, but showed higher re-use for speakers struggling with fluency. We conclude that, if fluency development is to be stimulated by re-use of words and grammatical structures, it can be done with specific task repetition, whether under increasing time pressure or not.",
-            "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
-            "date": {
-                "year": 2018,
-                "month": 10,
-                "day": 1
-            },
-            "isbn": 9789027263780,
-            "editor": "M. Bygate",
-            "publication": "Learning Language through Task Repetition",
-            "pages": {"start": 43, "end": 73},
-            "publisher": "Amsterdam: John Benjamins",
-            "doi": "10.1075/tblt.11.02jon",
-            "links": [
-                "http://jbe-platform.com/content/books/9789027263780-tblt.11.02jon"
-            ]
-        },
-        {
-            "title": "Fedosov observables on constant curvature manifolds and the Klein–Gordon equation",
-            "abstract": "In this paper we construct the Fedosov star-algebra of observables on the phase–space of a single particle in the case of all (finite-dimensional) constant curvature manifolds imbeddable in a flat space with codimension one. This set of spaces includes the two-sphere and de Sitter (dS)/Anti-de Sitter (AdS) space–times. The algebra of observables was constructed by DQ techniques using, in particular, the algorithm provided by Fedosov.\n\nThe purpose of this paper was three-fold. One was to verify that DQ gave the same results as previous analyses of these spaces. Another was to verify that the formal series used in the conventional treatment converged by obtaining exact and nonperturbative results for these spaces. The last was to further develop and understand the technology of the Fedosov algorithm.",
-            "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
-            "date": {
-                "year": 2008,
-                "month": 6,
-                "day": 1
-            },
-            "publication": "Journal of Geometry and Physics ",
-            "volume": 58,
-            "issue": 6,
-            "pages": {"start": 773, "end": 801},
-            "publisher": "Amsterdam: Elsevier",
-            "doi": "10.1016/j.geomphys.2008.02.001",
-            "links": [
-                "https://www.sciencedirect.com/science/article/pii/S039304400800020X?via%3Dihub"
-            ]
-        }
-    ]
+            {
+                "title": "Fedosov observables on constant curvature manifolds and the Klein–Gordon equation",
+                "abstract": "In this paper we construct the Fedosov star-algebra of observables on the phase–space of a single particle in the case of all (finite-dimensional) constant curvature manifolds imbeddable in a flat space with codimension one. This set of spaces includes the two-sphere and de Sitter (dS)/Anti-de Sitter (AdS) space–times. The algebra of observables was constructed by DQ techniques using, in particular, the algorithm provided by Fedosov.\n\nThe purpose of this paper was three-fold. One was to verify that DQ gave the same results as previous analyses of these spaces. Another was to verify that the formal series used in the conventional treatment converged by obtaining exact and nonperturbative results for these spaces. The last was to further develop and understand the technology of the Fedosov algorithm.",
+                "authors": [{"first_name": "Phil", "last_name": "Tillman"}, {"first_name": "Nel", "last_name": "de Jong"}],
+                "date": {
+                    "year": 2008,
+                    "month": 6,
+                    "day": 1
+                },
+                "publication": "Journal of Geometry and Physics ",
+                "volume": 58,
+                "issue": 6,
+                "pages": {"start": 773, "end": 801},
+                "publisher": "Amsterdam: Elsevier",
+                "doi": "10.1016/j.geomphys.2008.02.001",
+                "links": [
+                    "https://www.sciencedirect.com/science/article/pii/S039304400800020X?via%3Dihub"
+                ]
+            }
+        ]   
+    }
 }
