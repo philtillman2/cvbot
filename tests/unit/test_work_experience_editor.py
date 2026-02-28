@@ -49,6 +49,8 @@ def test_get_work_experience_page_contains_profile_json(
                 assert "window.__profileData" in resp.text
                 assert "work_experience.js" in resp.text
                 assert source_data["summary"][:40] in resp.text
+                assert source_data["profile"]["first_name"] in resp.text
+                assert source_data["profile"]["location"]["city"] in resp.text
 
     _run_coro_in_thread(_run())
 

@@ -24,11 +24,12 @@ def test_startup_load_candidates_stores_and_uses_db_work_experience(
             assert len(rows) == 1
             assert rows[0]["id"] == TEST_CANDIDATE_ID
             assert rows[0]["first_name"] == "Philip"
-            assert rows[0]["last_name"] == "Fry"
-            assert rows[0]["middle_name"] == "J"
+            assert rows[0]["last_name"] == "Tillman"
+            assert rows[0]["middle_name"] == "Charles"
 
             db_json = json.loads(rows[0]["work_experience"])
             assert db_json["summary"] == source_data["summary"]
+            assert db_json["profile"]["last_name"] == "Tillman"
 
             replacement = {
                 "summary": "from db",
@@ -46,8 +47,8 @@ def test_startup_load_candidates_stores_and_uses_db_work_experience(
             await load_candidates()
             rows_after = await db.execute_fetchall("SELECT id FROM candidates")
             assert len(rows_after) == 1
-            assert (
-                json.loads(get_profile_json(TEST_CANDIDATE_ID))["summary"] == "from db"
-            )
+            profile_after = json.loads(get_profile_json(TEST_CANDIDATE_ID))
+            assert profile_after["summary"] == "from db"
+            assert profile_after["profile"]["last_name"] == "Tillman"
 
     _run_coro_in_thread(_run())

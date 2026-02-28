@@ -1,4 +1,13 @@
 {
+    "profile": {
+        "first_name": "Philip",
+        "middle_name": "Charles",
+        "last_name": "Tillman",
+        "location": {
+            "city": "Naarden",
+            "country": "The Netherlands"
+        }
+    },
     "summary": "I am a Machine Learning Scientist and Engineer having over 15 years of experience developing and designing our innovative applications. I lead teams that deliver Machine Learning applications to customers as well as design platforms and tools to support the Machine Learning life cycle (MLOps / DevOps).\n\nML: Leading teams to apply modern Machine Learning models to customer-facing applications such as RAG and classification using modern methods (e.g., Claude, GPT, BERT, SPECTER) as well as deploying them at scale. I lead teams that go from prototype to deployments working with the customer to ensure that they have the best experience and can use them effectively.\n\nMLOps: As a former software developer and a machine learning scientist combined with my experience using and developing tooling for ML, I have a unique understanding of how we can design tools (platforms/systems) that support Machine Learning scientists. My experience with MLOps tools like Kedro, and Spark/Databricks, and the experience in building a deployment platform using Kubernetes (Java and Python) that can run inference efficiently and at the scale. My expertise also includes designing and building ML pipelines handling large amounts of data.",
     "skills": "Main languages: Python, Java, Javascript, C#, CSS, HTML, SQL\n\nRecent technologies: Apache Spark (Databricks), Jupyter lab/notebooks, Docker, pandas, numpy, scikit-learn, Kubernetes, Helm, AWS (S3, EKS, DynamoDB, ECR, EC2), Qdrant, git, Flask, FastAPI, vLLM, Kedro, Pytorch, Spring (for Java), Rabbitmq, PostgreSQL, Angular\n\nI speak English (native), and Dutch (B2, passed Staatsexamen NT2, progamma II).",
     "work": [

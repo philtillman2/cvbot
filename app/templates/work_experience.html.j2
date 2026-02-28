@@ -4,11 +4,16 @@
 
 {% block body %}
 <div class="container-fluid py-4" style="max-width: 900px;">
-    <div class="d-flex align-items-center mb-4">
+    <div class="d-flex align-items-start mb-4">
         <a href="/chat" class="btn btn-sm btn-outline-secondary me-2" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Back to interview" aria-label="Back to interview">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h3 class="mb-0"><i class="bi bi-briefcase me-2"></i>Work Experience</h3>
+        <div>
+            <h3 class="mb-0"><i class="bi bi-briefcase me-2"></i>{{ page_title }}</h3>
+            {% if page_subtitle %}
+            <div class="text-body-secondary" style="font-size:0.9rem;"><i class="bi bi-geo-alt"></i> {{ page_subtitle }}</div>
+            {% endif %}
+        </div>
         <div class="ms-auto d-flex align-items-center gap-2">
             <span class="badge bg-secondary chat-token-badge me-2"><span id="nr-tokens">?</span> tokens</span>
             <button type="button" class="btn btn-sm btn-outline-secondary" id="downloadProfileBtn" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Download JSON" aria-label="Download JSON">

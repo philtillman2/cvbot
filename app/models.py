@@ -100,7 +100,20 @@ class Publication(BaseModel):
     links: list[str] = []
 
 
+class ProfileLocation(BaseModel):
+    city: str = ""
+    country: str = ""
+
+
+class ProfileInfo(BaseModel):
+    first_name: str = ""
+    middle_name: str = ""
+    last_name: str = ""
+    location: Optional[ProfileLocation] = None
+
+
 class WorkExperience(BaseModel):
+    profile: Optional[ProfileInfo] = None
     summary: str = ""
     skills: str = ""
     work: list[WorkEntry] = []

@@ -30,14 +30,30 @@ async def work_experience_page(request: Request, candidate_id: str | None = None
     profile = get_profile(candidate_id) if candidate_id else None
     profile_json = json.dumps(profile.model_dump(), default=str) if profile else "null"
     display_name = ""
+    page_title = "Work Experience"
+    page_subtitle = ""
     if profile:
         display_name = next((c["display_name"] for c in candidates if c["id"] == candidate_id), "")
+        if profile.profile:
+            first = (profile.profile.first_name or "").strip()
+            middle = (profile.profile.middle_name or "").strip()
+            last = (profile.profile.last_name or "").strip()
+            profile_name = " ".join(part for part in (first, f"{middle[0]}.", last) if part)
+            page_title = profile_name or display_name or page_title
+            if profile.profile.location:
+                city = (profile.profile.location.city or "").strip()
+                country = (profile.profile.location.country or "").strip()
+                page_subtitle = ", ".join(part for part in (city, country) if part)
+        else:
+            page_title = display_name or page_title
 
     return templates.TemplateResponse("work_experience.html.j2", {
         "request": request,
         "candidates": candidates,
         "candidate_id": candidate_id,
         "display_name": display_name,
+        "page_title": page_title,
+        "page_subtitle": page_subtitle,
         "profile_json": profile_json,
     })
 
