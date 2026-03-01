@@ -24,7 +24,7 @@
           "name": "Elsevier BV",
           "description": "Elsevier is a publisher of around 17% of the world's academic research. Beyond publication, they are a global analytics company as well as a company that delivers AI/ML solutions for customers in the area of academia, government, life sciences, and chemistry",
           "link": "https://www.elsevier.com/",
-          "sector": "Publising",
+          "sector": "Publishing",
           "location": "Amsterdam, The Netherlands"
         },
         "roles": [
@@ -47,6 +47,11 @@
                 "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver customer-facing products like RAG (Retrieval Augmented Generation) and classifications. I was responsible for the E2E design and execution as well as determining the strategy to manage functional and non-functional quality of these systems as well as reporting and customer and stakeholder communication. We designed a streamlit agentic RAG chat prototype with a LangGraph backend. Production system was delivered FastAPI."
               },
               {
+                "title": "EV Compendex application",
+                "description": "An application that assistant subject matter experts (SMEs) labelling of abstracts for subject classification for the Compendex classifier. It was an implementation of the active learning process that leverages an ML model (SentenceTransformer) to rank and select the abstracts to be labelled by the SMEs. The implementation was a set of microservices. It had an REACT front-end, MongoDB, RabbitMQ message bus, FastAPI API's, as well as a celery worker to process long-running tasks like retraining the model.",
+                "contribution": "I led a team consisting of a REACT developer and a data scientist to fix and implement the needed fixes. Things I did were:\n\n- Defined the technical plan for implementation and support of the application.\n\n-Addressed the enormous tech-debt.\n- Manage communication with stakeholders\n - Re-architectured the deployment by stream-lining it via bash scripts, docker-compose, ECR, image tags, etc, to make it easy to deploy new instances and deploy updates.\n- Completely redesigned the data collection that consisted of a two-step process of an initial filter of 30M abstracts with a keyword search using BM25 to get 10,000 items and then an ML model (SentenceTransformer) to rank and select the top 500 abstracts. This was used as input for the application.\n- Wired up the PRF (precision/recall/f-score) into the UI.\n- I implemented small UI fixes."
+              },
+              {
                 "title": "ProjectX: ML Deployment platform",
                 "description": "A scalable platform that our data scientists can deploy models for online inference and batch inference. At the time there no solutions for us and deployments were a manual ad hoc process. This was an initiative to create a pathway to deployment for our teams.",
                 "contribution": "Designed and developed a scalable high-performance one-click machine learning deployment platform that enabled multiple teams to make their deliverables while simultaneously reducing costs (idle EC2 running instances). The platform is a Kubernetes-based application consisting of Java and Python microservices using Spring Boot and RabbitMQ with a consumer-producer architecture. Supported models ranged form BERT to Llama2 7b (LLMs were deployed using vLLM). We were able to do inference with a SciBERT-based classifier on a database of 80 million title-abstracts in 16.5 hours using 20 simultaneous GPU-enabled classifiers. I was the lead architect, developer and machine learning expert on the project composed of myself, a machine learning engineer and a data scientist."
@@ -54,7 +59,7 @@
               {
                 "title": "Subscription toolkit chatbot for Legal",
                 "description": "The legal department needed a way to streamline questions our consultants have about contract issues regarding subscription. They had a long document called a subscription toolkit, but it was cumbersome for a person to scan through it. Therefore we set up a RAG solution so that they could chat with the toolkit and pull out the relevant answers quickly. Tech stack: FastAPI, Jinja2, SQLite, LangGraph that integrate with Amazon Bedrock KnowledgeBase.\n\nFeatures included\n\n- A cost dashboard to track token costs to LLMs sent to Amazon Bedrock LLMs like Claude.\n- A daily rate limiter that capped the maximum cost.\n- JWT authentication and user credential management.\nPrompt management so admins can edit their prompts and keep different versions.",
-                "contribution": "I designed, implemented. I deployed it on Kubernetes. I implemented a application that they"
+                "contribution": "I designed, implemented, and deployed it on Kubernetes. I made it so that they self-manage the application by editing the prompts, track & limit costs, view feedback, and view chat histories. Also, I implemented a feature where they can pass the source document markup (colored text, bold, strikethrough, etc.) to the responses from the chatbot."
               },
               {
                 "title": "Methods and Protocols Reboot",
@@ -64,7 +69,7 @@
               {
                 "title": "MLOps",
                 "description": "Supporting our data scientists with everything to do with deploying our systems (ML/AI) into prpoduct (like scaling and cost management, efficiency, etc.) along with tooling to support the ML/AI lifecycle",
-                "contribution": "MLOps: Responsible for recommending the best MLOps practices by testing tools, like Sagemaker and Bedrock.\n\nDevOps: Responsible for managing the tooling and costs together with our DevOps team."
+                "contribution": "- **MLOps:** Responsible for recommending the best MLOps practices by testing tools, like Sagemaker and Bedrock.\n- **DevOps:** Responsible for managing the tooling and costs together with our DevOps team.\n- **Coding agents:** Evaluated coding agents: Github copilot, copilot cli, Claude code, and Kilo code as well as models like Claude Opus, Sonnet, Codex, Devstral, etc."
               }
             ]
           },
@@ -318,7 +323,7 @@
       },
       {
         "title": "Fedosov observables on constant curvature manifolds and the Klein–Gordon equation",
-        "abstract": "In this paper we construct the Fedosov star-algebra of observables on the phase–space of a single particle in the case of all (finite-dimensional) constant curvature manifolds imbeddable in a flat space with codimension one. This set of spaces includes the two-sphere and de Sitter (dS)/Anti-de Sitter (AdS) space–times. The algebra of observables was constructed by DQ techniques using, in particular, the algorithm provided by Fedosov.\n\nThe purpose of this paper was three-fold. One was to verify that DQ gave the same results as previous analyses of these spaces. Another was to verify that the formal series used in the conventional treatment converged by obtaining exact and nonperturbative results for these spaces. The last was to further develop and understand the technology of the Fedosov algorithm.",
+        "abstract": "In this paper we construct the Fedosov star-algebra of observables on the phase–space of a single particle in the case of all (finite-dimensional) constant curvature manifolds embeddable in a flat space with codimension one. This set of spaces includes the two-sphere and de Sitter (dS)/Anti-de Sitter (AdS) space–times. The algebra of observables was constructed by DQ techniques using, in particular, the algorithm provided by Fedosov.\n\nThe purpose of this paper was three-fold. One was to verify that DQ gave the same results as previous analyses of these spaces. Another was to verify that the formal series used in the conventional treatment converged by obtaining exact and nonperturbative results for these spaces. The last was to further develop and understand the technology of the Fedosov algorithm.",
         "authors": [
           {
             "first_name": "Phil",
