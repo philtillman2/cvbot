@@ -28,6 +28,13 @@ from conftest import TEST_CANDIDATE_ID, UnitTestEnv, _run_coro_in_thread
 
 # ─── Tests ────────────────────────────────────────────────────
 
+def _json_schema_shape(value):
+    if isinstance(value, dict):
+        return {k: _json_schema_shape(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_json_schema_shape(v) for v in value]
+    return type(value).__name__
+
 
 def test_get_work_experience_page_contains_profile_json(
     tmp_path: Path, test_candidate_source_data
@@ -83,7 +90,7 @@ def test_get_work_experience_page_reloads_empty_cache(
 
 
 def test_download_work_experience_json(tmp_path: Path, test_candidate_source_data):
-    """GET download endpoint should return candidate work_experience JSON attachment."""
+    """GET download endpoint should return Candidate JSON with canonical schema."""
 
     async def _run():
         async with UnitTestEnv(tmp_path, test_candidate_source_data):
@@ -95,7 +102,7 @@ def test_download_work_experience_json(tmp_path: Path, test_candidate_source_dat
                 transport=ASGITransport(app=app), base_url="http://test"
             ) as client:
                 resp = await client.get(
-                    f"/api/candidates/{TEST_CANDIDATE_ID}/work-experience/download"
+                    f"/api/candidates/{TEST_CANDIDATE_ID}/"
                 )
                 assert resp.status_code == 200
                 assert resp.headers["content-type"].startswith("application/json")
@@ -104,8 +111,9 @@ def test_download_work_experience_json(tmp_path: Path, test_candidate_source_dat
                     in resp.headers.get("content-disposition", "").lower()
                 )
                 body = resp.json()
-                assert body["summary"] == test_candidate_source_data["work_experience"]["summary"]
-                assert "work" in body
+                assert _json_schema_shape(body) == _json_schema_shape(
+                    test_candidate_source_data
+                )
 
     _run_coro_in_thread(_run())
 

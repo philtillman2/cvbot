@@ -632,7 +632,7 @@
     }
 
     async function exportProfile() {
-        const resp = await fetch(`/api/candidates/${candidateId}/work-experience/download`);
+        const resp = await fetch(`/api/candidates/${candidateId}/`);
         if (!resp.ok) {
             const err = await resp.json().catch(() => ({}));
             throw new Error(err.detail || resp.statusText);

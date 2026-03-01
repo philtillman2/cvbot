@@ -78,17 +78,16 @@ async def update_work_experience(candidate_id: str, body: WorkExperience):
     return JSONResponse({"ok": True})
 
 
-@router.get("/api/candidates/{candidate_id}/work-experience/download")
+@router.get("/api/candidates/{candidate_id}/")
 async def download_work_experience(candidate_id: str):
     candidate = await _get_candidate_with_reload(candidate_id)
-    profile = candidate.work_experience if candidate else None
-    if profile is None:
+    if candidate is None:
         raise HTTPException(status_code=404, detail="Candidate not found")
     return Response(
-        content=profile.model_dump_json(indent=2),
+        content=candidate.model_dump_json(indent=2, exclude_unset=True),
         media_type="application/json",
         headers={
-            "Content-Disposition": f'attachment; filename="{candidate_id}_work_experience.json"'
+            "Content-Disposition": f'attachment; filename="{candidate_id}.json"'
         },
     )
 
