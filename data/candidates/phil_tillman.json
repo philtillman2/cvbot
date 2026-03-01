@@ -301,7 +301,7 @@
           "month": 10,
           "day": 1
         },
-        "publication": "Learning Language through Task Repetition",
+        "publication_name": "Learning Language through Task Repetition",
         "volume": null,
         "issue": null,
         "pages": {
@@ -334,7 +334,7 @@
           "month": 6,
           "day": 1
         },
-        "publication": "Journal of Geometry and Physics ",
+        "publication_name": "Journal of Geometry and Physics ",
         "volume": 58,
         "issue": 6,
         "pages": {

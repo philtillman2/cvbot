@@ -34,6 +34,16 @@
         return "";
     }
 
+    function normalizePublicationFields() {
+        if (!Array.isArray(data?.publications)) return;
+        data.publications.forEach(pub => {
+            if (!pub) return;
+            if (!pub.publication_name) pub.publication_name = pub.publication || pub.journal || "";
+            delete pub.publication;
+            delete pub.journal;
+        });
+    }
+
     /* ── edit-mode field helpers ─────────────────────────── */
     function editableField(value, onChange, opts = {}) {
         const isTextarea = opts.multiline;
@@ -547,7 +557,7 @@
                             h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Mo:"), monthField(pub.date.month, v => { pub.date.month = v; }, { className: "we-date-input we-date-month" })),
                             h("span", { className: "d-flex align-items-center gap-1" }, h("small", null, "Day:"), numField(pub.date.day, v => { pub.date.day = v; }, { placeholder: "Day", className: "we-date-input we-date-month" }))),
                         h("div", { className: "d-flex flex-wrap gap-2 mb-2" },
-                            editableField(pub.publication || pub.journal || "", v => { pub.publication = v; }, { placeholder: "Publication/journal" }),
+                            editableField(pub.publication_name || "", v => { pub.publication_name = v; }, { placeholder: "Publication/journal" }),
                             numField(pub.volume, v => { pub.volume = v; }, { placeholder: "Vol" }),
                             numField(pub.issue, v => { pub.issue = v; }, { placeholder: "Issue" }),
                             numField(pub.pages.start, v => { pub.pages.start = v; }, { placeholder: "Page start" }),
@@ -574,7 +584,7 @@
                 body.append(top);
 
                 const meta = h("div", { className: "we-pub-meta text-body-secondary", style: "font-size:0.85rem" });
-                const pubName = pub.publication || pub.journal;
+                const pubName = pub.publication_name || pub.publication || pub.journal;
                 if (pubName) meta.append(h("em", null, pubName), " ");
                 if (pub.volume != null) meta.append(`vol.\u00a0${pub.volume}${pub.issue != null ? `(${pub.issue})` : ""} `);
                 if (pub.pages && pub.pages.start != null && pub.pages.end != null) meta.append(`pp.\u00a0${pub.pages.start}–${pub.pages.end} `);
@@ -603,7 +613,7 @@
         s.append(addBtn("Publication", () => {
             if (!data.publications) data.publications = [];
             data.publications.push({ title: "", abstract: "", authors: [], date: { year: null, month: null, day: null },
-                journal: "", publication: "", volume: null, issue: null,
+                publication_name: "", volume: null, issue: null,
                 pages: { start: null, end: null }, publisher: "", editor: "", isbn: null, doi: "", links: [] });
             startEdit(`pub-${data.publications.length - 1}`, true);
         }));
@@ -661,6 +671,7 @@
         const body = await resp.json().catch(() => ({}));
         if (!resp.ok) throw new Error(body.detail || resp.statusText);
         data = body.profile;
+        normalizePublicationFields();
         editingKeys.clear();
         Object.keys(snapshots).forEach(k => delete snapshots[k]);
         render();
@@ -692,6 +703,7 @@
         const downloadBtn = document.getElementById("exportProfileBtn");
         const uploadBtn = document.getElementById("uploadProfileBtn");
         const uploadInput = document.getElementById("uploadProfileInput");
+        normalizePublicationFields();
         updateTokenCount();
         if (downloadBtn) {
             downloadBtn.addEventListener("click", async () => {

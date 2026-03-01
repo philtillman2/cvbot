@@ -1,11 +1,17 @@
+import json
 import socket
+import sqlite3
 import subprocess
 import sys
 import time
+from pathlib import Path
 from urllib.request import urlopen
 
 import pytest
 from playwright.sync_api import Browser, sync_playwright
+
+TEST_CANDIDATE_ID = "philip_j_fry"
+SOURCE_JSON_PATH = Path("data/candidates/phil_tillman.json")
 
 
 def _free_port() -> int:
@@ -15,7 +21,31 @@ def _free_port() -> int:
 
 
 @pytest.fixture(scope="session")
-def base_url() -> str:
+def playwright_test_candidate():
+    payload = json.loads(SOURCE_JSON_PATH.read_text(encoding="utf-8"))
+    with sqlite3.connect("cvbot.db") as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO candidates (id, first_name, last_name, middle_name, work_experience) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (
+                TEST_CANDIDATE_ID,
+                payload.get("first_name", ""),
+                payload.get("last_name", ""),
+                payload.get("middle_name"),
+                json.dumps(payload),
+            ),
+        )
+        conn.commit()
+    try:
+        yield
+    finally:
+        with sqlite3.connect("cvbot.db") as conn:
+            conn.execute("DELETE FROM candidates WHERE id = ?", (TEST_CANDIDATE_ID,))
+            conn.commit()
+
+
+@pytest.fixture(scope="session")
+def base_url(playwright_test_candidate) -> str:
     port = _free_port()
     proc = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(port)],

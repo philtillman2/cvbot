@@ -88,8 +88,7 @@ class Publication(BaseModel):
     abstract: str = ""
     authors: list[Author] = []
     date: Optional[PublicationDate] = None
-    journal: str = ""
-    publication: str = ""
+    publication_name: str = ""
     volume: Optional[int] = None
     issue: Optional[int] = None
     pages: Optional[PageRange] = None

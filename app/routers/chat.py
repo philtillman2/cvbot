@@ -34,13 +34,13 @@ async def chat_page(request: Request):
         if existing:
             return RedirectResponse(url=f"/chat/{last_chat_id}")
     conversations = await db.execute_fetchall(
-        "SELECT c.*, TRIM(ca.first_name || ' ', '') || ca.last_name) "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || ca.last_name) "
         "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
     candidates = await db.execute_fetchall(
         "SELECT id, first_name, last_name, "
-        "TRIM(first_name || ' ' || ' ', '') || last_name) AS display_name "
+        "TRIM(first_name || ' ' || last_name) AS display_name "
         "FROM candidates ORDER BY display_name"
     )
     return templates.TemplateResponse("chat.html.j2", {
