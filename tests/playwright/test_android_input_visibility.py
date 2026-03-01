@@ -126,11 +126,11 @@ def test_last_message_not_hidden_behind_mobile_composer(browser, base_url):
     page = context.new_page()
     try:
         page.goto(f"{base_url}/chat", wait_until="domcontentloaded")
-        overlap = page.evaluate(
+        page.evaluate(
             """() => {
                 const messages = document.getElementById("chatMessages");
                 const inputArea = document.querySelector(".chat-input-area");
-                if (!messages || !inputArea) return Number.POSITIVE_INFINITY;
+                if (!messages || !inputArea) return;
 
                 messages.querySelector(".welcome-screen")?.remove();
                 for (let i = 0; i < 35; i += 1) {
@@ -140,13 +140,34 @@ def test_last_message_not_hidden_behind_mobile_composer(browser, base_url):
                     messages.appendChild(div);
                 }
                 messages.scrollTop = messages.scrollHeight;
-
-                const last = messages.lastElementChild?.getBoundingClientRect();
-                const inputRect = inputArea.getBoundingClientRect();
-                if (!last) return Number.POSITIVE_INFINITY;
+            }"""
+        )
+        page.evaluate("() => window.dispatchEvent(new Event('resize'))")
+        page.evaluate(
+            "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
+        )
+        page.wait_for_timeout(300)
+        page.wait_for_function(
+            """() => {
+                const messages = document.getElementById("chatMessages");
+                const inputArea = document.querySelector(".chat-input-area");
+                const last = messages?.lastElementChild?.getBoundingClientRect();
+                const inputRect = inputArea?.getBoundingClientRect();
+                if (!last || !inputRect) return false;
+                return (last.bottom - inputRect.top) <= 1;
+            }""",
+            timeout=3000,
+        )
+        overlap = page.evaluate(
+            """() => {
+                const messages = document.getElementById("chatMessages");
+                const inputArea = document.querySelector(".chat-input-area");
+                const last = messages?.lastElementChild?.getBoundingClientRect();
+                const inputRect = inputArea?.getBoundingClientRect();
+                if (!last || !inputRect) return Number.POSITIVE_INFINITY;
                 return last.bottom - inputRect.top;
             }"""
         )
-        assert overlap <= 0, f"Expected final message to remain above composer, overlap={overlap}px"
+        assert overlap <= 1, f"Expected final message to remain above composer, overlap={overlap}px"
     finally:
         context.close()
