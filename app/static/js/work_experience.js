@@ -631,7 +631,7 @@
         } catch (e) { alert("Save failed: " + e.message); }
     }
 
-    async function downloadProfile() {
+    async function exportProfile() {
         const resp = await fetch(`/api/candidates/${candidateId}/work-experience/download`);
         if (!resp.ok) {
             const err = await resp.json().catch(() => ({}));
@@ -689,14 +689,14 @@
 
     /* ── init ─────────────────────────────────────────────── */
     document.addEventListener("DOMContentLoaded", () => {
-        const downloadBtn = document.getElementById("downloadProfileBtn");
+        const downloadBtn = document.getElementById("exportProfileBtn");
         const uploadBtn = document.getElementById("uploadProfileBtn");
         const uploadInput = document.getElementById("uploadProfileInput");
         updateTokenCount();
         if (downloadBtn) {
             downloadBtn.addEventListener("click", async () => {
                 try {
-                    await downloadProfile();
+                    await exportProfile();
                 } catch (e) {
                     alert("Download failed: " + e.message);
                 }
