@@ -150,6 +150,14 @@
         }
     }
 
+    function moveRoleItem(role, fromIndex, toIndex) {
+        if (!Array.isArray(role?.items)) return;
+        if (fromIndex < 0 || toIndex < 0 || fromIndex >= role.items.length || toIndex >= role.items.length) return;
+        if (fromIndex === toIndex) return;
+        const [moved] = role.items.splice(fromIndex, 1);
+        role.items.splice(toIndex, 0, moved);
+    }
+
     function clearKeysWithPrefix(prefix) {
         for (const key of [...editingKeys]) {
             if (key === prefix || key.startsWith(prefix + '-')) {
@@ -357,8 +365,38 @@
                 if (editingKeys.has(roleKey)) {
                     const itemsC = h("div", { className: "we-items" });
                     role.items.forEach((item, ii) => {
-                        itemsC.append(h("div", { className: "we-item mb-3" },
+                        itemsC.append(h("div", {
+                            className: "we-item we-item-edit-draggable mb-3",
+                            draggable: "true",
+                            onDragstart: e => {
+                                e.dataTransfer.effectAllowed = "move";
+                                e.dataTransfer.setData("text/plain", String(ii));
+                                e.currentTarget.classList.add("we-item-dragging");
+                            },
+                            onDragend: e => {
+                                e.currentTarget.classList.remove("we-item-dragging");
+                                document.querySelectorAll(".we-item-drop-target").forEach(el => el.classList.remove("we-item-drop-target"));
+                            },
+                            onDragover: e => {
+                                const fromIndex = Number(e.dataTransfer.getData("text/plain"));
+                                if (!Number.isInteger(fromIndex) || fromIndex === ii) return;
+                                e.preventDefault();
+                                e.currentTarget.classList.add("we-item-drop-target");
+                            },
+                            onDragleave: e => {
+                                e.currentTarget.classList.remove("we-item-drop-target");
+                            },
+                            onDrop: e => {
+                                e.preventDefault();
+                                e.currentTarget.classList.remove("we-item-drop-target");
+                                const fromIndex = Number(e.dataTransfer.getData("text/plain"));
+                                if (!Number.isInteger(fromIndex) || fromIndex === ii) return;
+                                moveRoleItem(role, fromIndex, ii);
+                                render();
+                            }
+                        },
                             h("div", { className: "d-flex align-items-center gap-2 mb-1" },
+                                h("span", { className: "we-item-drag-handle", title: "Drag to reorder work item" }, h("i", { className: "bi bi-grip-vertical" })),
                                 editableField(item.title, v => { item.title = v; }, { placeholder: "Item title", className: "fw-semibold" }),
                                 removeBtn(() => { role.items.splice(ii, 1); render(); })),
                             editableField(item.description, v => { item.description = v; }, { multiline: true, placeholder: "Description" }),
