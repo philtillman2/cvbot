@@ -308,10 +308,16 @@
             const body = h("div", { className: "card-body" });
             body.append(h("div", { className: "d-flex justify-content-between align-items-start" },
                 h("h6", { className: "we-role-title mb-2" }, "Summary"), pencilBtn(key)));
-            if (data.summary) body.append(h("p", { style: "font-size:0.85rem;white-space:pre-line" }, data.summary));
-            if (data.skills) body.append(
-                h("h6", { className: "we-role-title mb-2 mt-3" }, "Skills"),
-                h("p", { style: "font-size:0.85rem;white-space:pre-line" }, data.skills));
+            if (data.summary) {
+                const summary = h("div", { style: "font-size:0.85rem" });
+                summary.innerHTML = parseMarkdownSafe(data.summary);
+                body.append(summary);
+            }
+            if (data.skills) {
+                const skills = h("div", { style: "font-size:0.85rem" });
+                skills.innerHTML = parseMarkdownSafe(data.skills);
+                body.append(h("h6", { className: "we-role-title mb-2 mt-3" }, "Skills"), skills);
+            }
             s.append(h("div", { className: "card mb-4" }, body));
         }
     }
@@ -553,11 +559,13 @@
                 let dissBlock = null;
                 if (edu.dissertation) {
                     const d = edu.dissertation;
+                    const description = d.description ? h("div", { className: "mt-2 mb-1", style: "font-size:0.85rem" }) : null;
+                    if (description) description.innerHTML = parseMarkdownSafe(d.description);
                     dissBlock = h("div", { className: "card-body" },
                         h("h6", { className: "we-role-title mb-2" }, "Dissertation"),
                         h("div", { className: "fw-semibold", style: "font-size:0.9rem" }, d.title),
                         d.primary_research ? h("small", { className: "text-body-secondary" }, d.primary_research) : null,
-                        d.description ? h("p", { className: "mt-2 mb-1", style: "font-size:0.85rem" }, d.description) : null,
+                        description,
                         d.advisors && d.advisors.length ? h("p", { className: "mb-0 text-body-secondary", style: "font-size:0.85rem" },
                             h("i", { className: "bi bi-person me-1" }), "Advisors: " + d.advisors.join(", ")) : null);
                 }
@@ -652,9 +660,11 @@
                 body.append(meta);
 
                 if (pub.abstract) {
+                    const abstract = h("div", { className: "mt-1 mb-0", style: "font-size:0.85rem" });
+                    abstract.innerHTML = parseMarkdownSafe(pub.abstract);
                     const det = h("details", { className: "mt-2" },
                         h("summary", { className: "text-body-secondary", style: "font-size:0.85rem;cursor:pointer" }, "Abstract"),
-                        h("p", { className: "mt-1 mb-0", style: "font-size:0.85rem" }, pub.abstract));
+                        abstract);
                     body.append(det);
                 }
 
