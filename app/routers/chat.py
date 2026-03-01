@@ -58,7 +58,7 @@ async def chat_page(request: Request):
 async def chat_page_with_conversation(request: Request, conversation_id: int):
     db = await get_db()
     conversations = await db.execute_fetchall(
-        "SELECT c.*, TRIM(ca.first_name || ' ' || ' ', '') || ca.last_name) "
+        "SELECT c.*, TRIM(ca.first_name || ' ' || ca.last_name) "
         "as candidate_name FROM conversations c "
         "JOIN candidates ca ON c.candidate_id = ca.id ORDER BY c.updated_at DESC"
     )
