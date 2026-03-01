@@ -68,7 +68,7 @@
               },
               {
                 "title": "MLOps",
-                "description": "Supporting our data scientists with everything to do with deploying our systems (ML/AI) into prpoduct (like scaling and cost management, efficiency, etc.) along with tooling to support the ML/AI lifecycle",
+                "description": "Supporting our data scientists with everything to do with deploying our systems (ML/AI) into product (like scaling and cost management, efficiency, etc.) along with tooling to support the ML/AI lifecycle",
                 "contribution": "- **MLOps:** Responsible for recommending the best MLOps practices by testing tools, like Sagemaker and Bedrock.\n- **DevOps:** Responsible for managing the tooling and costs together with our DevOps team.\n- **Coding agents:** Evaluated coding agents: Github copilot, copilot cli, Claude code, and Kilo code as well as models like Claude Opus, Sonnet, Codex, Devstral, etc."
               }
             ]
@@ -108,7 +108,7 @@
             "items": [
               {
                 "title": "Chinese Ministry of Education subject classifier",
-                "description": "Deliver a subject classifier and classify all of Scopus abstracts (67M+) based on the Chinese Ministry of Education taxonomy. The taxonomy consisted of 111 classes including things like cybersecurity, physics, chinese medicine, and forestry studies. The challenge was to procure additional training data using semi-automated methods and evaluate real-world quality taking into account the limitations of this new procured data to be used in metrics that are meaningful. Metrics used was pecision/recall/f-score of the new training data with additional spot checks by subject matter experts",
+                "description": "Deliver a subject classifier and classify all of Scopus abstracts (67M+) based on the Chinese Ministry of Education taxonomy. The taxonomy consisted of 111 classes including things like cybersecurity, physics, chinese medicine, and forestry studies. The challenge was to procure additional training data using semi-automated methods and evaluate real-world quality taking into account the limitations of this new procured data to be used in metrics that are meaningful. Metrics used was percision/recall/f-score of the new training data with additional spot checks by subject matter experts",
                 "contribution": "Successfully led diverse teams of multiple data scientists and domain experts (~ 5 people) to deliver classifications based with FastText-BERT ensemble model. I defined the technical plan (like defining the model architecture), defined the metrics we used, defined the testing plan, ran experiments, and communicated progress & results to stakeholders."
               }
             ]
