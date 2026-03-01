@@ -34,6 +34,19 @@
         return "";
     }
 
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text ?? "";
+        return div.innerHTML;
+    }
+
+    function parseMarkdownSafe(markdown) {
+        const source = markdown ?? "";
+        if (typeof marked === "undefined") return escapeHtml(source).replace(/\n/g, "<br>");
+        const html = marked.parse(source);
+        return typeof DOMPurify !== "undefined" ? DOMPurify.sanitize(html) : html;
+    }
+
     function normalizePublicationFields() {
         if (!Array.isArray(data?.publications)) return;
         data.publications.forEach(pub => {
@@ -425,8 +438,16 @@
                         role.items.forEach((it, ii) => {
                             const itDiv = h("div", { className: "we-item" + (ii < role.items.length - 1 ? " mb-3" : "") });
                             if (it.title) itDiv.append(h("div", { className: "fw-semibold", style: "font-size:0.9rem" }, it.title));
-                            if (it.description) itDiv.append(h("p", { className: "text-body-secondary mb-1", style: "font-size:0.85rem" }, it.description));
-                            if (it.contribution) itDiv.append(h("p", { className: "mb-0", style: "font-size:0.85rem" }, it.contribution));
+                            if (it.description) {
+                                const desc = h("div", { className: "text-body-secondary mb-1", style: "font-size:0.85rem" });
+                                desc.innerHTML = parseMarkdownSafe(it.description);
+                                itDiv.append(desc);
+                            }
+                            if (it.contribution) {
+                                const contribution = h("div", { className: "mb-0", style: "font-size:0.85rem" });
+                                contribution.innerHTML = parseMarkdownSafe(it.contribution);
+                                itDiv.append(contribution);
+                            }
                             items.append(itDiv);
                         });
                         rd.append(items);
