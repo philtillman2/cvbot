@@ -60,7 +60,7 @@ async def job_fit_page(request: Request):
 async def job_fit_stream(body: JobFitRequest):
     db = await get_db()
     rows = await db.execute_fetchall(
-        "SELECT id, TRIM(first_name || ' ' || COALESCE(middle_name || ' ', '') || last_name) "
+        "SELECT id, TRIM(first_name || ' ' || last_name) "
         "AS display_name FROM candidates WHERE id = ?",
         (body.candidate_id,),
     )
