@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const usageCurrentCost = document.getElementById("chatUsageCurrentCost");
     const usageMaxCost = document.getElementById("chatUsageMaxCost");
     const chatInputArea = document.querySelector(".chat-input-area");
+    const settingsToggle = document.querySelector(".topbar-settings-toggle");
+    const settingsMenu = document.querySelector(".settings-menu");
     const modelStorageKey = "cvbot.selectedModel";
 
     let conversationId = null;
@@ -104,6 +106,14 @@ document.addEventListener("DOMContentLoaded", () => {
     window.visualViewport?.addEventListener("scroll", () => syncBottomOffsets(false));
     chatInput?.addEventListener("focus", () => syncBottomOffsets(false));
     setTimeout(() => syncBottomOffsets(false), 250);
+
+    // Keep settings menu open when its toggle is clicked while already open.
+    settingsToggle?.addEventListener("click", (e) => {
+        if (settingsMenu?.classList.contains("show")) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    });
 
     // Auto-resize textarea
     chatInput.addEventListener("input", () => {
